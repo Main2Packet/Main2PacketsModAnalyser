@@ -1213,6 +1213,55 @@ function Invoke-RecentLnkScan {
     return $hits
 }
 
+function Invoke-TaskManagerProcessScan {
+    param(
+        [string[]]$Keywords = @("198m","198macro","prestige","prestige-injector","prestigeinjector")
+    )
+    $hits = [System.Collections.Generic.List[psobject]]::new()
+    try {
+        $processes = Get-CimInstance Win32_Process -ErrorAction Stop
+    } catch {
+        return $hits
+    }
+    foreach ($proc in $processes) {
+        $nameLower = if ($proc.Name) { $proc.Name.ToLower() } else { '' }
+        $cmdLower  = if ($proc.CommandLine) { $proc.CommandLine.ToLower() } else { '' }
+        foreach ($keyword in $Keywords) {
+            if ($nameLower -like "*${keyword}*" -or ($cmdLower -and $cmdLower -like "*${keyword}*")) {
+                $hits.Add([PSCustomObject]@{
+                    ProcessName = $proc.Name
+                    ProcessId   = $proc.ProcessId
+                    CommandLine = $proc.CommandLine
+                })
+                break
+            }
+        }
+    }
+    return $hits
+}
+
+function Write-TaskManagerScanReport {
+    param(
+        $ProcessHits
+    )
+
+    $ProcessHits = @($ProcessHits | Where-Object { $_ -ne $null })
+    Write-SectionHeader -Title "TASKMANAGER PROCESS SCAN" -Count $ProcessHits.Count -DotColor Magenta -CountColor Magenta
+    if ($ProcessHits.Count -gt 0) {
+        foreach ($hit in $ProcessHits) {
+            Write-Host "  • $($hit.ProcessName) PID $($hit.ProcessId)" -ForegroundColor White
+            if ($null -ne $hit.CommandLine -and $hit.CommandLine -ne '') {
+                Write-Host "       Command:   " -ForegroundColor Gray -NoNewline
+                Write-Host "$($hit.CommandLine)" -ForegroundColor DarkGray
+            }
+        }
+        Write-Host ""
+    } else {
+        Write-Host "  No suspicious TaskManager processes found." -ForegroundColor DarkGray
+        Write-Host ""
+    }
+}
+
 function Write-HistoryScanReport {
     param(
         $PrefetchHits,
@@ -1227,10 +1276,6 @@ function Write-HistoryScanReport {
         Write-Host "  Prefetch matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $PrefetchHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
-            if ($null -ne $hit.LastRun -and $hit.LastRun -ne '') {
-                Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline
-                Write-Host "$($hit.LastRun)" -ForegroundColor DarkGray
-            }
             if ($null -ne $hit.PrefetchPath -and $hit.PrefetchPath -ne '') {
                 Write-Host "       Executable: " -ForegroundColor Gray -NoNewline
                 Write-Host "$($hit.PrefetchPath)" -ForegroundColor DarkGray
@@ -1545,6 +1590,8 @@ Write-Host "`r$(' ' * 100)`r" -NoNewline
 
 $prefetchHits = Invoke-PrefetchScan
 $recentHits   = Invoke-RecentLnkScan
+$processHits  = Invoke-TaskManagerProcessScan
+Write-TaskManagerScanReport -ProcessHits $processHits
 Write-HistoryScanReport -PrefetchHits $prefetchHits -RecentHits $recentHits
 
 if ($verifiedMods.Count -gt 0) {
