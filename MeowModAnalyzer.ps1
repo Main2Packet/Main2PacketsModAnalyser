@@ -1276,10 +1276,6 @@ function Write-HistoryScanReport {
         Write-Host "  Prefetch matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $PrefetchHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
-            if ($null -ne $hit.LastRun -and $hit.LastRun -ne '') {
-                Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline
-                Write-Host "$($hit.LastRun)" -ForegroundColor DarkGray
-            }
             if ($null -ne $hit.PrefetchPath -and $hit.PrefetchPath -ne '') {
                 Write-Host "       Executable: " -ForegroundColor Gray -NoNewline
                 Write-Host "$($hit.PrefetchPath)" -ForegroundColor DarkGray
