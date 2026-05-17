@@ -1307,7 +1307,6 @@ foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
     Write-Host "`r[$spinner] Verifying: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
-    Write-HiddenBadge -File $jar
 
     $modMeta = Get-ModMetadataFromJar -FilePath $jar.FullName
     $modMetas[$jar.Name] = $modMeta
@@ -1348,7 +1347,6 @@ foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
     Write-Host "`r[$spinner] Scanning: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
-    Write-HiddenBadge -File $jar
 
     $result = Invoke-ModScan -FilePath $jar.FullName
 
@@ -1373,7 +1371,6 @@ foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
     Write-Host "`r[$spinner] Bypass scan: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
-    Write-HiddenBadge -File $jar
 
     $bypassFlags = Invoke-BypassScan -FilePath $jar.FullName
 
@@ -1397,7 +1394,6 @@ foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
     Write-Host "`r[$spinner] Obf scan: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
-    Write-HiddenBadge -File $jar
 
     $obfFlags = Invoke-ObfuscationScan -FilePath $jar.FullName
 
@@ -1439,7 +1435,7 @@ if ($verifiedMods.Count -gt 0) {
         Write-Host "  ✓ " -ForegroundColor Green -NoNewline
         Write-Host "$($mod.ModName)" -ForegroundColor White -NoNewline
         Write-Host " → " -ForegroundColor Gray -NoNewline
-        Write-Host "$($mod.FileName)" -ForegroundColor DarkGray -NoNewline
+        Write-Host "$($mod.FileName)" -ForegroundColor DarkGray
         if ($mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta }
     }
     Write-Host ""
