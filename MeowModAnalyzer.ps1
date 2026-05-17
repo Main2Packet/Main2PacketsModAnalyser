@@ -376,7 +376,182 @@ $cheatStrings = @(
     "novoware", "novoclient",
     "aristois", "impactclient", "azura",
     "pandaware", "skilled", "moonClient", "astolfo",
-    "futureClient", "konas", "rusherhack", "inertia", "exhibition"
+    "futureClient", "konas", "rusherhack", "inertia", "exhibition",
+    # Additional detection strings from user list:
+    "ahc.class", "triggerbot", "killaura", "selfdestruct", "strafe", "pingspoof",
+    "meteorclient", "prestige", "s3lfd3struct", "playerreach", "jumpreset", "fakelag",
+    "autoclick", "doomsdayclient.com", "hotbarswap", "switchdelay", "switch_delay_ms",
+    "swapBackToOriginalSlot", "attackRegisteredThisClick", "findKnockbackSword", "lvstrng",
+    "safe anchor", "safe_anchor", "auto crystal", "anchor macro", "auto totem", "autototem",
+    "auto_hit_crystal", "auto_inventory_totem", "EndCrystalItemMixin", "isDeadBodyNearby",
+    "POT_CHEATS", "getBlockBreakingCooldown", "Anch0r Macr0", "Aut0H1tCryst4l",
+    "L3g1t R3t0t3m", "Anchor_Macro", "Auto_crystal", "hookCancelBlockBreaking",
+    "canPlaceCrystalServer", "onSwapLastAttackedTicksReset", "redirectSelectedSlot",
+    "getHandSwingDuration", "onBeginRenderTick", "PlayerMoveC2SPacketAccessor",
+    "clickSimulation", "switchDelay", "switchChance", "placeChance", "glowstoneDelay",
+    "glowstoneChance", "explodeDelay", "explodeChance", "explodeSlot", "antiWeakness",
+    "damageTick", "breakChance", "breakDelay", "stopOnCrystal", "processCrystal",
+    "swapToWeapon", "isObsidianOrBedrock", "isValidCrystalPosition", "processAnchorPvP",
+    "isValidAnchorPosition", "AutoCrystal", "autocrystal", "auto crystal", "AutoHitCrystal",
+    "autohitcrystal", "dontPlaceCrystal", "dontBreakCrystal", "autoCrystalPlaceClock",
+    "AutoAnchor", "autoanchor", "auto anchor", "DoubleAnchor", "safe anchor", "safeanchor",
+    "anchortweaks", "anchor macro", "AutoTotem", "autototem", "auto totem", "InventoryTotem",
+    "inventorytotem", "HoverTotem", "hover totem", "legittotem", "AutoPot", "autopot",
+    "auto pot", "speedPotSlot", "strengthPotSlot", "AutoArmor", "autoarmor", "auto armor",
+    "preventSwordBlockBreaking", "preventSwordBlockAttack", "AutoDoubleHand", "autodoublehand",
+    "auto double hand", "AutoClicker", "AimAssist", "aimassist", "aim assist", "trigger bot",
+    "shieldbreaker", "shield breaker", "axespam", "axe spam", "FakeLag", "ping spoof",
+    "FakeInv", "pushOutOfBlocks", "onPushOutOfBlocks", "webmacro", "web macro", "JumpReset",
+    "setBlockBreakingCooldown", "setItemUseCooldown", "onBlockBreaking", "invokeDoAttack",
+    "invokeDoItemUse", "setSelectedSlot", "getSelectedSlot", "blockBreakingCooldown",
+    "invokeOnMouseButton", "getVisualAttackCooldownProgressPerTick", "endcrystalitemmixin",
+    "WalksyCrystalOptimizerMod", "arrayOfString", "StringObfuscator", "onShouldRenderBlockOutline",
+    "predictCrystals", "noOffhandTotem", "getNearByCrystals", "slotExplode", "needToPlaceRails",
+    "findTotemSlot", "activateOnRightClick", "crystalPlaceClock", "CrystalTwiceClock",
+    "mainHandStack", "attackInAir", "attackOnJump", "onDestruct", "getGlowstoneChance",
+    "isAutoCharge", "getPlaceChance", "getSwitchDelay", "getGlowstoneDelay", "getExplodeDelay",
+    "getExplodeSlotIndex", "getPlaceDelayTicks", "getBreakDelayTicks", "isSpawnersEnabled",
+    "isShulkersEnabled", "onModuleDisabled", "switchToBestTool", "switchToBestWeapon",
+    "isLootProtect", "getMinHunger", "isTracersEnabled", "getSelectedBlocks", "isChestsEnabled",
+    "inventoryToMenuSlot", "throwPearl", "isLeftHoldOnly",
+    "Automatically switches to sword when hitting with totem",
+    "Failed to switch to mace after axe!", "Breaking shield with axe...", "TrilliumSolutions",
+    "self destruct", "ＡｕｔｏＣｒｙｓｔａｌ", "Ａｕｔｏ Ｃｒｙｓｔａｌ", "ＡｕｔｏＨｉｔＣｒｙｓｔａｌ", "Ａ．ｕｔｏ Ｃｒｙｓｔａｌ",
+    "Ａ．ｕｔｏＣｒｙｓｔａｌＬＶ２", "Ａ．ｕｔｏ Ｈｉｔ Ｃｒｙｓｔａｌ", "ＡｕｔｏＡｎｃｈｏｒ", "Ａｕｔｏ Ａｎｃｈｏｒ",
+    "ＤｏｕｂｌｅＡｎｃｈｏｒ", "Ｄｏｕｂｌｅ Ａｎｃｈｏｒ", "ＳａｆｅＡｎｃｈｏｒ", "Ｓａｆｅ Ａｎｃｈｏｒ",
+    "Ａｎｃｈｏｒ Ｍａｃｒｏ", "Ａ．ｎｃｈｏｒ Ｍａｃｒｏ", "Ａ．ｎｃｈｏｒ Ｍａｃｒｏ Ｖ２", "Ｄ．ｏｕｂｌｅ Ａｎｃｈｏｒ",
+    "Ｓ．ａｆｅＡｎｃｈｏｒ", "ＡｕｔｏＴｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ Ｈｉｔ",
+    "Ａ．ｕｔｏ Ｔｏｔｅｍ Ｈｉｔ", "ＨｏｖｅｒＴｏｔｅｍ", "Ｈｏｖｅｒ Ｔｏｔｅｍ", "ＩｎｖｅｎｔｏｒｙＴｏｔｅｍ",
+    "Ｈ．ｏｖｅｒ Ｔｏｔｅｍ", "Ａ．ｕｔｏ Ｉｎｖｅｎｔｏｒｙ Ｔｏｔｅｍ", "Ｆ．ｏｒｃｅ Ｔｏｔｅｍ", "Ｔ．ｏｔｅｍ Ｆｉｒｓｔ",
+    "Ｔ．ｏｔｅｍ Ｏｆｆｈａｎｄ", "Ｔ．ｏｔｅｍ Ｓｌｏｔ", "Ｈ．ｏｖｅｒ", "Ｗ．ｏｒｋ Ｗｉｔｈ Ｔｏｔｅｍ",
+    "ＡｕｔｏＤｏｕｂｌｅＨａｎｄ", "Ａｕｔｏ Ｄｏｕｂｌｅ Ｈａｎｄ", "Ａ．ｕｔｏ Ｄｏｕｂｌｅ Ｈａｎｄ",
+    "Ａ．ｃｔｉｖａｔｅ Ｋｅｙ", "Ｗ．ｈｉｌｅ Ｕｓｅ", "Ｓ．ｔｏｐ ｏｎ Ｋｉｌｌ",
+    "Ｃ．ｌｉｃｋ Ｓｉｍｕｌａｔｉｏｎ", "Ｓ．ｗｉｔｃｈ Ｄｅｌａｙ", "Ｓ．ｗｔｃｈ Ｃｈａｎｃｅ",
+    "Ｐ．ｌａｃｅ Ｃｈａｎｃｅ", "Ｇ．ｌｏｗｓｔｏｎｅ Ｄｅｌａｙ", "Ｇ．ｌｏｗｓｔｏｎｅ Ｃｈａｎｃｅ",
+    "Ｅ．ｘｐｌｏｄｅ Ｄｅｌａｙ", "Ｅ．ｘｐｌｏｄｅ Ｃｈａｎｃｅ", "Ｅ．ｘｐｌｏｄｅ Ｓｌｏｔ",
+    "Ｏ．ｎｌｙ Ｏｗｎ", "Ｏ．ｎｌｙ Ｃｈａｒｇｅ", "Ｒ．ａｎｄｏｍ Ｇｌｏｗｓｔｏｎｅ",
+    "7hr0w P0t", "Aut0 Jump R3s3t", "4ut0 Jump r3s3t", "tr1gg3rb0t", "trigg3rb0t",
+    "D0uble4nch0r", "D0ubl34nch0r", "4nch0rM4cr0", "Anch0rMacr0", "Anc0rM4cr0",
+    "M4c3 Sw4p", "Mac3 Sw4p", "тriggerbot", "tr​iggerbot", "ｔｒｉｇｇｅｒｂｏｔ", "кillaura",
+    "ki​llaura", "ｋｉｌｌａｕｒａ", "ѕelfdеstruct", "ｓｅｌｆｄｅｓｔｒｕｃｔ", "ｓｔｒａｆｅ", "ａｉｍａｓｓｉｓｔ",
+    "ａｉｍａｓｓｉｓｔ", "ａｉｍ ａｓｓｉｓｔ", "ａｉｍ ａｓｓｉｓｔ", "playerreach", "jumрreset",
+    "ｊｕｍｐｒｅｓｅｔ", "ｊｕｍｐｒｅｓｅｔ", "ｆａｋｅｌａｇ", "autосlick", "ａｕｔｏｃｌｉｃｋ",
+    "ａｕｔｏ ｃｌｉｃｋ", "hotbаrswap", "ｈｏｔｂａｒｓｗａｐ", "swіtchDеlаy", "ｓｗｉｔｃｈＤｅｌａｙ",
+    "switch_delay_ms", "swapBackToOriginalSlot", "attackRegisteredThisClick", "findKnockbackSword",
+    "lvstrng", "safe anchor", "safe_anchor", "ｓａｆｅ ａｎｃｈｏｒ", "auto crystal",
+    "ａｕｔｏ ｃｒｙｓｔａｌ", "anchor macro", "ａｎｃｈｏｒ ｍａｃｒｏ", "auto totem", "ａｕｔｏ ｔｏｔｅｍ",
+    "autototem", "ａｕｔｏｔｏｔｅｍ", "auto_hit_crystal", "auto_inventory_totem", "EndCrystalItemMixin",
+    "isDeadBodyNearby", "POT_CHEATS", "getBlockBreakingCooldown", "Anch0r Macr0", "Aut0H1tCryst4l",
+    "L3g1t R3t0t3m", "Anchor_Macro", "Auto_crystal", "hookCancelBlockBreaking",
+    "canPlaceCrystalServer", "onSwapLastAttackedTicksReset", "redirectSelectedSlot",
+    "getHandSwingDuration", "onBeginRenderTick", "PlayerMoveC2SPacketAccessor", "clickSimulation",
+    "switchDelay", "switchChance", "placeChance", "glowstoneDelay", "glowstoneChance",
+    "explodeDelay", "explodeChance", "explodeSlot", "antiWeakness", "damageTick", "breakChance",
+    "breakDelay", "stopOnCrystal", "processCrystal", "swapToWeapon", "isObsidianOrBedrock",
+    "isValidCrystalPosition", "processAnchorPvP", "isValidAnchorPosition", "AutoCrystal",
+    "autocrystal", "auto crystal", "AutoHitCrystal", "autohitcrystal", "dontPlaceCrystal",
+    "dontBreakCrystal", "canPlaceCrystalServer", "autoCrystalPlaceClock", "AutoAnchor", "autoanchor",
+    "auto anchor", "DoubleAnchor", "safe anchor", "safeanchor", "anchortweaks", "anchor macro",
+    "AutoTotem", "autototem", "auto totem", "InventoryTotem", "inventorytotem", "HoverTotem",
+    "hover totem", "legittotem", "AutoPot", "autopot", "auto pot", "speedPotSlot",
+    "strengthPotSlot", "AutoArmor", "autoarmor", "auto armor", "preventSwordBlockBreaking",
+    "preventSwordBlockAttack", "AutoDoubleHand", "autodoublehand", "auto double hand",
+    "AutoClicker", "AimAssist", "aimassist", "aim assist", "trigger bot", "shieldbreaker",
+    "shield breaker", "axespam", "axe spam", "FakeLag", "ping spoof", "FakeInv",
+    "pushOutOfBlocks", "onPushOutOfBlocks", "webmacro", "web macro", "JumpReset",
+    "setBlockBreakingCooldown", "setItemUseCooldown", "onBlockBreaking", "invokeDoAttack",
+    "invokeDoItemUse", "setSelectedSlot", "getSelectedSlot", "blockBreakingCooldown",
+    "invokeOnMouseButton", "onSwapLastAttackedTicksReset", "getVisualAttackCooldownProgressPerTick",
+    "getHandSwingDuration", "onBeginRenderTick", "PlayerMoveC2SPacketAccessor", "redirectSelectedSlot",
+    "hookCancelBlockBreaking", "EndCrystalItemMixin", "endcrystalitemmixin", "WalksyCrystalOptimizerMod",
+    "arrayOfString", "dqrkis", "StringObfuscator", "POT_CHEATS", "onShouldRenderBlockOutline",
+    "predictCrystals", "noOffhandTotem", "getNearByCrystals", "slotExplode", "needToPlaceRails",
+    "findTotemSlot", "activateOnRightClick", "crystalPlaceClock", "isDeadBodyNearby",
+    "CrystalTwiceClock", "mainHandStack", "attackInAir", "attackOnJump", "onDestruct",
+    "getGlowstoneChance", "isAutoCharge", "getPlaceChance", "getSwitchDelay", "getGlowstoneDelay",
+    "getExplodeDelay", "getExplodeSlotIndex", "getPlaceDelayTicks", "getBreakDelayTicks",
+    "isSpawnersEnabled", "isShulkersEnabled", "onModuleDisabled", "switchToBestTool",
+    "switchToBestWeapon", "isLootProtect", "getMinHunger", "isTracersEnabled", "getSelectedBlocks",
+    "isChestsEnabled", "inventoryToMenuSlot", "throwPearl", "isLeftHoldOnly",
+    "Automatically switches to sword when hitting with totem",
+    "Failed to switch to mace after axe!", "Breaking shield with axe...", "TrilliumSolutions",
+    "self destruct", "ＡｕｔｏＣｒｙｓｔａｌ", "Ａｕｔｏ Ｃｒｙｓｔａｌ", "ＡｕｔｏＨｉｔＣｒｙｓｔａｌ", "Ａ．ｕｔｏ Ｃｒｙｓｔａｌ",
+    "Ａ．ｕｔｏＣｒｙｓｔａｌＬＶ２", "Ａ．ｕｔｏ Ｈｉｔ Ｃｒｙｓｔａｌ", "ＡｕｔｏＡｎｃｈｏｒ", "Ａｕｔｏ Ａｎｃｈｏｒ",
+    "ＤｏｕｂｌｅＡｎｃｈｏｒ", "Ｄｏｕｂｌｅ Ａｎｃｈｏｒ", "ＳａｆｅＡｎｃｈｏｒ", "Ｓａｆｅ Ａｎｃｈｏｒ",
+    "Ａｎｃｈｏｒ Ｍａｃｒｏ", "Ａ．ｎｃｈｏｒ Ｍａｃｒｏ", "Ａ．ｎｃｈｏｒ Ｍａｃｒｏ Ｖ２", "Ｄ．ｏｕｂｌｅ Ａｎｃｈｏｒ",
+    "Ｓ．ａｆｅＡｎｃｈｏｒ", "ＡｕｔｏＴｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ Ｈｉｔ",
+    "Ａ．ｕｔｏ Ｔｏｔｅｍ Ｈｉｔ", "ＨｏｖｅｒＴｏｔｅｍ", "Ｈｏｖｅｒ Ｔｏｔｅｍ", "ＩｎｖｅｎｔｏｒｙＴｏｔｅｍ",
+    "Ｈ．ｏｖｅｒ Ｔｏｔｅｍ", "Ａ．ｕｔｏ Ｉｎｖｅｎｔｏｒｙ Ｔｏｔｅｍ", "Ｆ．ｏｒｃｅ Ｔｏｔｅｍ", "Ｔ．ｏｔｅｍ Ｆｉｒｓｔ",
+    "Ｔ．ｏｔｅｍ Ｏｆｆｈａｎｄ", "Ｔ．ｏｔｅｍ Ｓｌｏｔ", "Ｈ．ｏｖｅｒ", "Ｗ．ｏｒｋ Ｗｉｔｈ Ｔｏｔｅｍ",
+    "ＡｕｔｏＤｏｕｂｌｅＨａｎｄ", "Ａｕｔｏ Ｄｏｕｂｌｅ Ｈａｎｄ", "Ａ．ｕｔｏ Ｄｏｕｂｌｅ Ｈａｎｄ",
+    "Ａ．ｃｔｉｖａｔｅ Ｋｅｙ", "Ｗ．ｈｉｌｅ Ｕｓｅ", "Ｓ．ｔｏｐ ｏｎ Ｋｉｌｌ",
+    "Ｃ．ｌｉｃｋ Ｓｉｍｕｌａｔｉｏｎ", "Ｓ．ｗｉｔｃｈ Ｄｅｌａｙ", "Ｓ．ｗｔｃｈ Ｃｈａｎｃｅ",
+    "Ｐ．ｌａｃｅ Ｃｈａｎｃｅ", "Ｇ．ｌｏｗｓｔｏｎｅ Ｄｅｌａｙ", "Ｇ．ｌｏｗｓｔｏｎｅ Ｃｈａｎｃｅ",
+    "Ｅ．ｘｐｌｏｄｅ Ｄｅｌａｙ", "Ｅ．ｘｐｌｏｄｅ Ｃｈａｎｃｅ", "Ｅ．ｘｐｌｏｄｅ Ｓｌｏｔ",
+    "Ｏ．ｎｌｙ Ｏｗｎ", "Ｏ．ｎｌｙ Ｃｈａｒｇｅ", "Ｒ．ａｎｄｏｍ Ｇｌｏｗｓｔｏｎｅ",
+    "7hr0w P0t", "Aut0 Jump R3s3t", "4ut0 Jump r3s3t", "tr1gg3rb0t", "trigg3rb0t",
+    "D0uble4nch0r", "D0ubl34nch0r", "4nch0rM4cr0", "Anch0rMacr0", "Anc0rM4cr0",
+    "M4c3 Sw4p", "Mac3 Sw4p", "тriggerbot", "tr​iggerbot", "ｔｒｉｇｇｅｒｂｏｔ", "кillaura",
+    "ki​llaura", "ｋｉｌｌａｕｒａ", "ѕelfdеstruct", "ｓｅｌｆｄｅｓｔｒｕｃｔ", "ｓｔｒａｆｅ", "ａｉｍａｓｓｉｓｔ",
+    "ａｉｍａｓｓｉｓｔ", "ａｉｍ ａｓｓｉｓｔ", "ｐｌａｙｅｒｒｅａｃｈ", "jumрreset", "ｊｕｍｐｒｅｓｅｔ",
+    "ｆａｋｅｌａｇ", "autосlick", "ａｕｔｏｃｌｉｃｋ", "ａｕｔｏ ｃｌｉｃｋ", "hotbаrswap",
+    "ｈｏｔｂａｒｓｗａｐ", "swіtchDеlаy", "ｓｗｉｔｃｈＤｅｌａｙ", "switch_delay_ms",
+    "swapBackToOriginalSlot", "attackRegisteredThisClick", "findKnockbackSword", "lvstrng",
+    "safe anchor", "safe_anchor", "ｓａｆｅ ａｎｃｈｏｒ", "auto crystal", "ａｕｔｏ ｃｒｙｓｔａｌ",
+    "anchor macro", "ａｎｃｈｏｒ ｍａｃｒｏ", "auto totem", "ａｕｔｏ ｔｏｔｅｍ", "autototem",
+    "ａｕｔｏｔｏtｅｍ", "auto_hit_crystal", "auto_inventory_totem", "EndCrystalItemMixin",
+    "isDeadBodyNearby", "POT_CHEATS", "getBlockBreakingCooldown", "Anch0r Macr0", "Aut0H1tCryst4l",
+    "L3g1t R3t0t3m", "Anchor_Macro", "Auto_crystal", "hookCancelBlockBreaking",
+    "canPlaceCrystalServer", "onSwapLastAttackedTicksReset", "redirectSelectedSlot",
+    "getHandSwingDuration", "onBeginRenderTick", "PlayerMoveC2SPacketAccessor", "clickSimulation",
+    "switchDelay", "switchChance", "placeChance", "glowstoneDelay", "glowstoneChance",
+    "explodeDelay", "explodeChance", "explodeSlot", "antiWeakness", "damageTick", "breakChance",
+    "breakDelay", "stopOnCrystal", "processCrystal", "swapToWeapon", "isObsidianOrBedrock",
+    "isValidCrystalPosition", "processAnchorPvP", "isValidAnchorPosition", "AutoCrystal",
+    "autocrystal", "auto crystal", "AutoHitCrystal", "autohitcrystal", "dontPlaceCrystal",
+    "dontBreakCrystal", "canPlaceCrystalServer", "autoCrystalPlaceClock", "AutoAnchor", "autoanchor",
+    "auto anchor", "DoubleAnchor", "safe anchor", "safeanchor", "anchortweaks", "anchor macro",
+    "AutoTotem", "autototem", "auto totem", "InventoryTotem", "inventorytotem", "HoverTotem",
+    "hover totem", "legittotem", "AutoPot", "autopot", "auto pot", "speedPotSlot",
+    "strengthPotSlot", "AutoArmor", "autoarmor", "auto armor", "preventSwordBlockBreaking",
+    "preventSwordBlockAttack", "AutoDoubleHand", "autodoublehand", "auto double hand",
+    "AutoClicker", "AimAssist", "aimassist", "aim assist", "trigger bot", "shieldbreaker",
+    "shield breaker", "axespam", "axe spam", "FakeLag", "ping spoof", "FakeInv",
+    "pushOutOfBlocks", "onPushOutOfBlocks", "webmacro", "web macro", "JumpReset",
+    "setBlockBreakingCooldown", "setItemUseCooldown", "onBlockBreaking", "invokeDoAttack",
+    "invokeDoItemUse", "setSelectedSlot", "getSelectedSlot", "blockBreakingCooldown",
+    "invokeOnMouseButton", "onSwapLastAttackedTicksReset", "getVisualAttackCooldownProgressPerTick",
+    "getHandSwingDuration", "onBeginRenderTick", "PlayerMoveC2SPacketAccessor", "redirectSelectedSlot",
+    "hookCancelBlockBreaking", "EndCrystalItemMixin", "endcrystalitemmixin", "WalksyCrystalOptimizerMod",
+    "arrayOfString", "dqrkis", "StringObfuscator", "POT_CHEATS", "onShouldRenderBlockOutline",
+    "predictCrystals", "noOffhandTotem", "getNearByCrystals", "slotExplode", "needToPlaceRails",
+    "findTotemSlot", "activateOnRightClick", "crystalPlaceClock", "isDeadBodyNearby",
+    "CrystalTwiceClock", "mainHandStack", "attackInAir", "attackOnJump", "onDestruct",
+    "getGlowstoneChance", "isAutoCharge", "getPlaceChance", "getSwitchDelay", "getGlowstoneDelay",
+    "getExplodeDelay", "getExplodeSlotIndex", "getPlaceDelayTicks", "getBreakDelayTicks",
+    "isSpawnersEnabled", "isShulkersEnabled", "onModuleDisabled", "switchToBestTool",
+    "switchToBestWeapon", "isLootProtect", "getMinHunger", "isTracersEnabled", "getSelectedBlocks",
+    "isChestsEnabled", "inventoryToMenuSlot", "throwPearl", "isLeftHoldOnly",
+    "Automatically switches to sword when hitting with totem",
+    "Failed to switch to mace after axe!", "Breaking shield with axe...", "TrilliumSolutions",
+    "self destruct", "ＡｕｔｏＣｒｙｓｔａｌ", "Ａｕｔｏ Ｃｒｙｓｔａｌ", "ＡｕｔｏＨｉｔＣｒｙｓｔａｌ", "Ａ．ｕｔｏ Ｃｒｙｓｔａｌ",
+    "Ａ．ｕｔｏＣｒｙｓｔａｌＬＶ２", "Ａ．ｕｔｏ Ｈｉｔ Ｃｒｙｓｔａｌ", "ＡｕｔｏＡｎｃｈｏｒ", "Ａｕｔｏ Ａｎｃｈｏｒ",
+    "ＤｏｕｂｌｅＡｎｃｈｏｒ", "Ｄｏｕｂｌｅ Ａｎｃｈｏｒ", "ＳａｆｅＡｎｃｈｏｒ", "Ｓａｆｅ Ａｎｃｈｏｒ",
+    "Ａｎｃｈｏｒ Ｍａｃｒｏ", "Ａ．ｎｃｈｏｒ Ｍａｃｒｏ", "Ａ．ｎｃｈｏｒ Ｍａｃｒｏ Ｖ２", "Ｄ．ｏｕｂｌｅ Ａｎｃｈｏｒ",
+    "Ｓ．ａｆｅＡｎｃｈｏｒ", "ＡｕｔｏＴｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ Ｈｉｔ",
+    "Ａ．ｕｔｏ Ｔｏｔｅｍ Ｈｉｔ", "ＨｏｖｅｒＴｏｔｅｍ", "Ｈｏｖｅｒ Ｔｏｔｅｍ", "ＩｎｖｅｎｔｏｒｙＴｏｔｅｍ",
+    "Ｈ．ｏｖｅｒ Ｔｏｔｅｍ", "Ａ．ｕｔｏ Ｉｎｖｅｎｔｏｒｙ Ｔｏｔｅｍ", "Ｆ．ｏｒｃｅ Ｔｏｔｅｍ", "Ｔ．ｏｔｅｍ Ｆｉｒｓｔ",
+    "Ｔ．ｏｔｅｍ Ｏｆｆｈａｎｄ", "Ｔ．ｏｔｅｍ Ｓｌｏｔ", "Ｈ．ｏｖｅｒ", "Ｗ．ｏｒｋ Ｗｉｔｈ Ｔｏｔｅｍ",
+    "ＡｕｔｏＤｏｕｂｌｅＨａｎｄ", "Ａｕｔｏ Ｄｏｕｂｌｅ Ｈａｎｄ", "Ａ．ｕｔｏ Ｄｏｕｂｌｅ Ｈａｎｄ",
+    "Ａ．ｃｔｉｖａｔｅ Ｋｅｙ", "Ｗ．ｈｉｌｅ Ｕｓｅ", "Ｓ．ｔｏｐ ｏｎ Ｋｉｌｌ",
+    "Ｃ．ｌｉｃｋ Ｓｉｍｕｌａｔｉｏｎ", "Ｓ．ｗｉｔｃｈ Ｄｅｌａｙ", "Ｓ．ｗｔｃｈ Ｃｈａｎｃｅ",
+    "Ｐ．ｌａｃｅ Ｃｈａｎｃｅ", "Ｇ．ｌｏｗｓｔｏｎｅ Ｄｅｌａｙ", "Ｇ．ｌｏｗｓｔｏｎｅ Ｃｈａｎｃｅ",
+    "Ｅ．ｘｐｌｏｄｅ Ｄｅｌａｙ", "Ｅ．ｘｐｌｏｄｅ Ｃｈａｎｃｅ", "Ｅ．ｘｐｌｏｄｅ Ｓｌｏｔ",
+    "Ｏ．ｎｌｙ Ｏｗｎ", "Ｏ．ｎｌｙ Ｃｈａｒｇｅ", "Ｒ．ａｎｄｏｍ Ｇｌｏｗｓｔｏｎｅ",
+    "7hr0w P0t", "Aut0 Jump R3s3t", "4ut0 Jump r3s3t", "tr1gg3rb0t", "trigg3rb0t",
+    "D0uble4nch0r", "D0ubl34nch0r", "4nch0rM4cr0", "Anch0rMacr0", "Anc0rM4cr0",
+    "M4c3 Sw4p", "Mac3 Sw4p", "ｔｒｉｇｇｅｒｂｏｔ", "ｋｉｌｌａｕｒａ", "ｓｅｌｆｄｅｓｔｒｕｃｔ", "ｓｔｒａｆｅ",
+    "ａｉｍａｓｓｉｓｔ", "ａｕｔｏｃｌｉｃｋ", "ｈｏｔｂａｒｓｗａｐ", "ｓｗｉｔｃｈＤｅｌａｙ"
 )
 
 $patternRegex = [regex]::new(
@@ -416,115 +591,6 @@ function Get-DownloadSource {
         }
     }
     return $null
-}
-
-function Get-ModMetadataFromJar {
-    param([string]$FilePath)
-
-    $metadata = [PSCustomObject]@{
-        Id = ""
-        Name = ""
-        Version = ""
-        Source = ""
-        FilePath = $FilePath
-    }
-
-    try {
-        $zip = [System.IO.Compression.ZipFile]::OpenRead($FilePath)
-
-        function Get-NameFromJsonToken {
-            param($Token)
-            if ($null -eq $Token) { return "" }
-            if ($Token -is [string]) { return $Token }
-            if ($Token.PSObject.Properties.Count -gt 0) {
-                foreach ($lang in @('en_us','en','de_de','de','fr','es','pt_br')) {
-                    if ($Token.PSObject.Properties.Name -contains $lang) {
-                        return [string]$Token.$lang
-                    }
-                }
-                $firstProp = $Token.PSObject.Properties | Select-Object -First 1
-                if ($firstProp) { return [string]$firstProp.Value }
-            }
-            return [string]$Token
-        }
-
-        $fabricEntry = $zip.Entries | Where-Object { $_.FullName -ieq 'fabric.mod.json' } | Select-Object -First 1
-        if ($fabricEntry) {
-            try {
-                $stream = $fabricEntry.Open()
-                $reader = New-Object System.IO.StreamReader($stream)
-                $content = $reader.ReadToEnd()
-                $reader.Close(); $stream.Close()
-                $json = $content | ConvertFrom-Json -ErrorAction Stop
-                if ($json.PSObject.Properties.Name -contains 'id') { $metadata.Id = [string]$json.id }
-                if ($json.PSObject.Properties.Name -contains 'name') { $metadata.Name = Get-NameFromJsonToken $json.name }
-                if ($json.PSObject.Properties.Name -contains 'version') { $metadata.Version = [string]$json.version }
-                $metadata.Source = 'fabric.mod.json'
-            } catch { }
-        }
-
-        if ((-not $metadata.Name -or -not $metadata.Id)) {
-            $tomlEntry = $zip.Entries | Where-Object { $_.FullName -ieq 'META-INF/mods.toml' } | Select-Object -First 1
-            if ($tomlEntry) {
-                try {
-                    $stream = $tomlEntry.Open()
-                    $reader = New-Object System.IO.StreamReader($stream)
-                    $content = $reader.ReadToEnd()
-                    $reader.Close(); $stream.Close()
-
-                    $currentSection = ''
-                    foreach ($line in $content -split "`r?`n") {
-                        $trim = $line.Trim()
-                        if ($trim -match '^(?:#|//)') { continue }
-                        if ($trim -match '^\[(.+)\]$') {
-                            $currentSection = $matches[1]
-                            if ($currentSection -match '^mods\."([^\"]+)"$' -and -not $metadata.Id) {
-                                $metadata.Id = $matches[1]
-                            }
-                            continue
-                        }
-                        if ($currentSection -match '^mods') {
-                            if ($trim -match '^modId\s*=\s*"([^"]+)"' -and -not $metadata.Id) {
-                                $metadata.Id = $matches[1]
-                            }
-                            if ($trim -match '^(?:displayName|name|title)\s*=\s*"([^"]+)"' -and -not $metadata.Name) {
-                                $metadata.Name = $matches[1]
-                            }
-                            if ($trim -match '^version\s*=\s*"([^"]+)"' -and -not $metadata.Version) {
-                                $metadata.Version = $matches[1]
-                            }
-                        }
-                    }
-                    if ($metadata.Name -and -not $metadata.Source) { $metadata.Source = 'mods.toml' }
-                } catch { }
-            }
-        }
-
-        if (-not $metadata.Name) {
-            $manifestEntry = $zip.Entries | Where-Object { $_.FullName -match 'META-INF/(MANIFEST\.MF|manifest\.mf)$' } | Select-Object -First 1
-            if ($manifestEntry) {
-                try {
-                    $stream = $manifestEntry.Open()
-                    $reader = New-Object System.IO.StreamReader($stream)
-                    while (-not $reader.EndOfStream) {
-                        $line = $reader.ReadLine()
-                        if ($line -match '^(Implementation-Title|Specification-Title|Bundle-Name|Name):\s*(.+)$') {
-                            if (-not $metadata.Name) { $metadata.Name = $matches[2].Trim() }
-                        }
-                        if ($line -match '^(Implementation-Version|Specification-Version):\s*(.+)$') {
-                            if (-not $metadata.Version) { $metadata.Version = $matches[2].Trim() }
-                        }
-                    }
-                    $reader.Close(); $stream.Close()
-                    if ($metadata.Name -and -not $metadata.Source) { $metadata.Source = 'MANIFEST.MF' }
-                } catch { }
-            }
-        }
-
-        $zip.Dispose()
-    } catch { }
-
-    return $metadata
 }
 
 function Query-Modrinth {
@@ -1108,8 +1174,18 @@ function Write-HistoryScanReport {
         Write-Host "  Prefetch matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $PrefetchHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
-            Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.LastRun -or 'unknown')" -ForegroundColor DarkGray
-            Write-Host "       Executable: " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.PrefetchPath -or 'unknown')" -ForegroundColor DarkGray
+            Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline
+            if ($null -ne $hit.LastRun -and $hit.LastRun -ne '') {
+                Write-Host "$($hit.LastRun)" -ForegroundColor DarkGray
+            } else {
+                Write-Host "unknown" -ForegroundColor DarkGray
+            }
+            Write-Host "       Executable: " -ForegroundColor Gray -NoNewline
+            if ($null -ne $hit.PrefetchPath -and $hit.PrefetchPath -ne '') {
+                Write-Host "$($hit.PrefetchPath)" -ForegroundColor DarkGray
+            } else {
+                Write-Host "unknown" -ForegroundColor DarkGray
+            }
         }
         Write-Host ""
     }
@@ -1299,7 +1375,6 @@ Write-Host
 $spinnerFrames = @("⣾","⣽","⣻","⢿","⡿","⣟","⣯","⣷")
 $totalFiles    = $jarFiles.Count
 $idx           = 0
-$modMetas      = @{}
 
 Write-Host "🔍 Pass 1 — Hash verification (Modrinth + Megabase)..." -ForegroundColor DarkMagenta
 
@@ -1308,20 +1383,17 @@ foreach ($jar in $jarFiles) {
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
     Write-Host "`r[$spinner] Verifying: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
 
-    $modMeta = Get-ModMetadataFromJar -FilePath $jar.FullName
-    $modMetas[$jar.Name] = $modMeta
-
     $hash = Get-FileSHA1 -Path $jar.FullName
 
     if ($hash) {
         $modrinthData = Query-Modrinth -Hash $hash
         if ($modrinthData.Slug) {
-            $verifiedMods += [PSCustomObject]@{ ModName = $modrinthData.Name; FileName = $jar.Name; FilePath = $jar.FullName; Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden); Metadata = $modMeta }
+            $verifiedMods += [PSCustomObject]@{ ModName = $modrinthData.Name; FileName = $jar.Name; FilePath = $jar.FullName; Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden) }
             continue
         }
         $megabaseData = Query-Megabase -Hash $hash
         if ($megabaseData.name) {
-            $verifiedMods += [PSCustomObject]@{ ModName = $megabaseData.Name; FileName = $jar.Name; FilePath = $jar.FullName; Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden); Metadata = $modMeta }
+            $verifiedMods += [PSCustomObject]@{ ModName = $megabaseData.Name; FileName = $jar.Name; FilePath = $jar.FullName; Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden) }
             continue
         }
     }
@@ -1330,8 +1402,6 @@ foreach ($jar in $jarFiles) {
     $unknownMods += [PSCustomObject]@{
         FileName = $jar.Name
         FilePath = $jar.FullName
-        ModName = $modMeta.Name
-        MetadataSource = $modMeta.Source
         DownloadSource = $src
         Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden)
     }
@@ -1445,11 +1515,10 @@ if ($unknownMods.Count -gt 0) {
     Write-SectionHeader -Title "UNKNOWN MODS" -Count $unknownMods.Count -DotColor Magenta -CountColor Magenta
     Write-Rule "─" 76 DarkGray
     foreach ($mod in $unknownMods) {
-        $name = if ($mod.ModName) { "$($mod.ModName) - $($mod.FileName)" } else { $mod.FileName }
+        $name = $mod.FileName
         if ($name.Length -gt 50) { $name = $name.Substring(0,47) + "..." }
         $topLine    = "  ╔═ ? " + $name + " " + ("═" * (65 - $name.Length)) + "╗"
         $sourceText = if ($mod.DownloadSource) { "Source: $($mod.DownloadSource)" } else { "Source: ?" }
-        if ($mod.MetadataSource) { $sourceText += " | Metadata: $($mod.MetadataSource)" }
         $bottomLine = "  ╚═ " + $sourceText + " " + ("═" * (67 - $sourceText.Length)) + "╝"
         Write-Host $topLine    -ForegroundColor Yellow
         if ($mod.Hidden) { Write-Host "    [MOD IS HIDDEN]" -ForegroundColor Magenta }
@@ -1529,7 +1598,7 @@ Write-Host "  Suspicious mods:     " -ForegroundColor Gray -NoNewline; Write-Hos
 Write-Host "  Bypass/Injected:     " -ForegroundColor Gray -NoNewline; Write-Host "$($bypassMods.Count)"          -ForegroundColor Magenta
 Write-Host "  Obfuscated mods:     " -ForegroundColor Gray -NoNewline; Write-Host "$($obfuscatedMods.Count)"      -ForegroundColor Yellow
 Write-Host "  JVM issues:          " -ForegroundColor Gray -NoNewline; Write-Host "$($jvmFlags.Count)"            -ForegroundColor Yellow
-Write-Host "  History hits:        " -ForegroundColor Gray -NoNewline; Write-Host "$($prefetchHits.Count + $recentHits.Count)" -ForegroundColor Yellow
+Write-Host "  History hits:        " -ForegroundColor Gray -NoNewline; Write-Host "$(@($prefetchHits).Count + @($recentHits).Count)" -ForegroundColor Yellow
 Write-Host
 Write-Rule "━" 76 Magenta
 Write-Host ""
