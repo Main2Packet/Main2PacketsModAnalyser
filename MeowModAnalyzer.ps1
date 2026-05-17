@@ -6,6 +6,13 @@ $OutputEncoding           = [System.Text.Encoding]::UTF8
 chcp 65001 | Out-Null
 Clear-Host
 
+function Write-HiddenBadge {
+    param([System.IO.FileSystemInfo]$File)
+    if ($File.Attributes -band [System.IO.FileAttributes]::Hidden) {
+        Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline
+    }
+}
+
 $currentFont = (Get-ItemProperty "HKCU:\Console" -ErrorAction SilentlyContinue).FaceName
 if ($currentFont -notmatch "NSimSun|Gothic|Noto") {
     Write-Host "  Tip: To see all Unicode characters, set the terminal font to 'NSimSun'" -ForegroundColor DarkYellow
@@ -70,7 +77,7 @@ if (-not (Test-Path $modsPath -PathType Container)) {
     exit 1
 }
 
-Write-Host "📁 Scanning directory: $modsPath" -ForegroundColor Green
+Write-Host "📁 Scanning directory: $modsPath" -ForegroundColor Magenta
 Write-Host
 
 $mcProcess = Get-Process javaw -ErrorAction SilentlyContinue
@@ -409,6 +416,115 @@ function Get-DownloadSource {
         }
     }
     return $null
+}
+
+function Get-ModMetadataFromJar {
+    param([string]$FilePath)
+
+    $metadata = [PSCustomObject]@{
+        Id = ""
+        Name = ""
+        Version = ""
+        Source = ""
+        FilePath = $FilePath
+    }
+
+    try {
+        $zip = [System.IO.Compression.ZipFile]::OpenRead($FilePath)
+
+        function Get-NameFromJsonToken {
+            param($Token)
+            if ($null -eq $Token) { return "" }
+            if ($Token -is [string]) { return $Token }
+            if ($Token.PSObject.Properties.Count -gt 0) {
+                foreach ($lang in @('en_us','en','de_de','de','fr','es','pt_br')) {
+                    if ($Token.PSObject.Properties.Name -contains $lang) {
+                        return [string]$Token.$lang
+                    }
+                }
+                $firstProp = $Token.PSObject.Properties | Select-Object -First 1
+                if ($firstProp) { return [string]$firstProp.Value }
+            }
+            return [string]$Token
+        }
+
+        $fabricEntry = $zip.Entries | Where-Object { $_.FullName -ieq 'fabric.mod.json' } | Select-Object -First 1
+        if ($fabricEntry) {
+            try {
+                $stream = $fabricEntry.Open()
+                $reader = New-Object System.IO.StreamReader($stream)
+                $content = $reader.ReadToEnd()
+                $reader.Close(); $stream.Close()
+                $json = $content | ConvertFrom-Json -ErrorAction Stop
+                if ($json.PSObject.Properties.Name -contains 'id') { $metadata.Id = [string]$json.id }
+                if ($json.PSObject.Properties.Name -contains 'name') { $metadata.Name = Get-NameFromJsonToken $json.name }
+                if ($json.PSObject.Properties.Name -contains 'version') { $metadata.Version = [string]$json.version }
+                $metadata.Source = 'fabric.mod.json'
+            } catch { }
+        }
+
+        if ((-not $metadata.Name -or -not $metadata.Id)) {
+            $tomlEntry = $zip.Entries | Where-Object { $_.FullName -ieq 'META-INF/mods.toml' } | Select-Object -First 1
+            if ($tomlEntry) {
+                try {
+                    $stream = $tomlEntry.Open()
+                    $reader = New-Object System.IO.StreamReader($stream)
+                    $content = $reader.ReadToEnd()
+                    $reader.Close(); $stream.Close()
+
+                    $currentSection = ''
+                    foreach ($line in $content -split "`r?`n") {
+                        $trim = $line.Trim()
+                        if ($trim -match '^(?:#|//)') { continue }
+                        if ($trim -match '^\[(.+)\]$') {
+                            $currentSection = $matches[1]
+                            if ($currentSection -match '^mods\."([^\"]+)"$' -and -not $metadata.Id) {
+                                $metadata.Id = $matches[1]
+                            }
+                            continue
+                        }
+                        if ($currentSection -match '^mods') {
+                            if ($trim -match '^modId\s*=\s*"([^"]+)"' -and -not $metadata.Id) {
+                                $metadata.Id = $matches[1]
+                            }
+                            if ($trim -match '^(?:displayName|name|title)\s*=\s*"([^"]+)"' -and -not $metadata.Name) {
+                                $metadata.Name = $matches[1]
+                            }
+                            if ($trim -match '^version\s*=\s*"([^"]+)"' -and -not $metadata.Version) {
+                                $metadata.Version = $matches[1]
+                            }
+                        }
+                    }
+                    if ($metadata.Name -and -not $metadata.Source) { $metadata.Source = 'mods.toml' }
+                } catch { }
+            }
+        }
+
+        if (-not $metadata.Name) {
+            $manifestEntry = $zip.Entries | Where-Object { $_.FullName -match 'META-INF/(MANIFEST\.MF|manifest\.mf)$' } | Select-Object -First 1
+            if ($manifestEntry) {
+                try {
+                    $stream = $manifestEntry.Open()
+                    $reader = New-Object System.IO.StreamReader($stream)
+                    while (-not $reader.EndOfStream) {
+                        $line = $reader.ReadLine()
+                        if ($line -match '^(Implementation-Title|Specification-Title|Bundle-Name|Name):\s*(.+)$') {
+                            if (-not $metadata.Name) { $metadata.Name = $matches[2].Trim() }
+                        }
+                        if ($line -match '^(Implementation-Version|Specification-Version):\s*(.+)$') {
+                            if (-not $metadata.Version) { $metadata.Version = $matches[2].Trim() }
+                        }
+                    }
+                    $reader.Close(); $stream.Close()
+                    if ($metadata.Name -and -not $metadata.Source) { $metadata.Source = 'MANIFEST.MF' }
+                } catch { }
+            }
+        }
+
+        $zip.Dispose()
+    } catch { }
+
+    return $metadata
 }
 
 function Query-Modrinth {
@@ -980,10 +1096,14 @@ function Invoke-RecentLnkScan {
 
 function Write-HistoryScanReport {
     param(
-        [System.Collections.IEnumerable]$PrefetchHits,
-        [System.Collections.IEnumerable]$RecentHits
+        $PrefetchHits,
+        $RecentHits
     )
-    Write-SectionHeader -Title "SYSTEM HISTORY SCAN" -Count (($PrefetchHits.Count + $RecentHits.Count)) -DotColor Yellow -CountColor Yellow
+
+    $PrefetchHits = @($PrefetchHits | Where-Object { $_ -ne $null })
+    $RecentHits   = @($RecentHits   | Where-Object { $_ -ne $null })
+
+    Write-SectionHeader -Title "SYSTEM HISTORY SCAN" -Count (($PrefetchHits.Count + $RecentHits.Count)) -DotColor Magenta -CountColor Magenta
     if ($PrefetchHits.Count -gt 0) {
         Write-Host "  Prefetch matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $PrefetchHits) {
@@ -1009,7 +1129,7 @@ function Write-HistoryScanReport {
 }
 
 function Write-Rule {
-    param([string]$Char = "─", [int]$Width = 76, [ConsoleColor]$Color = "DarkGray")
+    param([string]$Char = "─", [int]$Width = 76, [ConsoleColor]$Color = "Magenta")
     Write-Host ($Char * $Width) -ForegroundColor $Color
 }
 
@@ -1035,7 +1155,9 @@ function Write-SuspiciousCard {
     Write-Host "  │ " -ForegroundColor DarkMagenta -NoNewline
     Write-Host " FLAGGED " -ForegroundColor White -BackgroundColor DarkMagenta -NoNewline
     Write-Host "  " -NoNewline
-    Write-Host $Mod.FileName -ForegroundColor Yellow
+    Write-Host $Mod.FileName -ForegroundColor Yellow -NoNewline
+    if ($Mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline }
+    Write-Host ""
     Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkMagenta
 
     if ($Mod.Patterns.Count -gt 0) {
@@ -1081,7 +1203,9 @@ function Write-InjectionCard {
     Write-Host "  │ " -ForegroundColor DarkMagenta -NoNewline
     Write-Host " INJECTION " -ForegroundColor White -BackgroundColor DarkMagenta -NoNewline
     Write-Host "  " -NoNewline
-    Write-Host $Mod.FileName -ForegroundColor Yellow
+    Write-Host $Mod.FileName -ForegroundColor Yellow -NoNewline
+    if ($Mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline }
+    Write-Host ""
     Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkMagenta
 
     foreach ($flag in $Mod.Flags) {
@@ -1116,7 +1240,9 @@ function Write-ObfuscationCard {
     Write-Host "  │ " -ForegroundColor DarkYellow -NoNewline
     Write-Host " OBFUSCATED " -ForegroundColor Black -BackgroundColor DarkYellow -NoNewline
     Write-Host "  " -NoNewline
-    Write-Host $Mod.FileName -ForegroundColor Yellow
+    Write-Host $Mod.FileName -ForegroundColor Yellow -NoNewline
+    if ($Mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline }
+    Write-Host ""
     Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkYellow
 
     foreach ($flag in $Mod.Flags) {
@@ -1167,37 +1293,49 @@ if ($jarFiles.Count -eq 0) {
 }
 
 $fileWord    = if ($jarFiles.Count -eq 1) { "file" } else { "files" }
-Write-Host "🔍 Found $($jarFiles.Count) JAR $fileWord to analyze" -ForegroundColor Green
+Write-Host "🔍 Found $($jarFiles.Count) JAR $fileWord to analyze" -ForegroundColor DarkMagenta
 Write-Host
 
 $spinnerFrames = @("⣾","⣽","⣻","⢿","⡿","⣟","⣯","⣷")
 $totalFiles    = $jarFiles.Count
 $idx           = 0
+$modMetas      = @{}
 
 Write-Host "🔍 Pass 1 — Hash verification (Modrinth + Megabase)..." -ForegroundColor DarkMagenta
 
 foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
-    Write-Host "`r[$spinner] Verifying: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Yellow -NoNewline
+    Write-Host "`r[$spinner] Verifying: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
+    Write-HiddenBadge -File $jar
+
+    $modMeta = Get-ModMetadataFromJar -FilePath $jar.FullName
+    $modMetas[$jar.Name] = $modMeta
 
     $hash = Get-FileSHA1 -Path $jar.FullName
 
     if ($hash) {
         $modrinthData = Query-Modrinth -Hash $hash
         if ($modrinthData.Slug) {
-            $verifiedMods += [PSCustomObject]@{ ModName = $modrinthData.Name; FileName = $jar.Name; FilePath = $jar.FullName }
+            $verifiedMods += [PSCustomObject]@{ ModName = $modrinthData.Name; FileName = $jar.Name; FilePath = $jar.FullName; Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden); Metadata = $modMeta }
             continue
         }
         $megabaseData = Query-Megabase -Hash $hash
         if ($megabaseData.name) {
-            $verifiedMods += [PSCustomObject]@{ ModName = $megabaseData.Name; FileName = $jar.Name; FilePath = $jar.FullName }
+            $verifiedMods += [PSCustomObject]@{ ModName = $megabaseData.Name; FileName = $jar.Name; FilePath = $jar.FullName; Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden); Metadata = $modMeta }
             continue
         }
     }
 
     $src = Get-DownloadSource $jar.FullName
-    $unknownMods += [PSCustomObject]@{ FileName = $jar.Name; FilePath = $jar.FullName; DownloadSource = $src }
+    $unknownMods += [PSCustomObject]@{
+        FileName = $jar.Name
+        FilePath = $jar.FullName
+        ModName = $modMeta.Name
+        MetadataSource = $modMeta.Source
+        DownloadSource = $src
+        Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden)
+    }
 }
 
 Write-Host "`r$(' ' * 100)`r" -NoNewline
@@ -1209,7 +1347,8 @@ $idx = 0
 foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
-    Write-Host "`r[$spinner] Scanning: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Yellow -NoNewline
+    Write-Host "`r[$spinner] Scanning: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
+    Write-HiddenBadge -File $jar
 
     $result = Invoke-ModScan -FilePath $jar.FullName
 
@@ -1219,6 +1358,7 @@ foreach ($jar in $jarFiles) {
             Patterns = $result.Patterns
             Strings  = $result.Strings
             Fullwidth = $result.Fullwidth
+            Hidden = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden)
         }
         $verifiedMods = $verifiedMods | Where-Object { $_.FileName -ne $jar.Name }
     }
@@ -1232,7 +1372,8 @@ $idx = 0
 foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
-    Write-Host "`r[$spinner] Bypass scan: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Yellow -NoNewline
+    Write-Host "`r[$spinner] Bypass scan: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
+    Write-HiddenBadge -File $jar
 
     $bypassFlags = Invoke-BypassScan -FilePath $jar.FullName
 
@@ -1240,6 +1381,7 @@ foreach ($jar in $jarFiles) {
         $bypassMods += [PSCustomObject]@{
             FileName = $jar.Name
             Flags    = $bypassFlags
+            Hidden   = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden)
         }
         $verifiedMods = $verifiedMods | Where-Object { $_.FileName -ne $jar.Name }
         $unknownMods  = $unknownMods  | Where-Object { $_.FileName -ne $jar.Name }
@@ -1254,7 +1396,8 @@ $idx = 0
 foreach ($jar in $jarFiles) {
     $idx++
     $spinner = $spinnerFrames[$idx % $spinnerFrames.Length]
-    Write-Host "`r[$spinner] Obf scan: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Yellow -NoNewline
+    Write-Host "`r[$spinner] Obf scan: $idx/$totalFiles - $($jar.Name)" -ForegroundColor Magenta -NoNewline
+    Write-HiddenBadge -File $jar
 
     $obfFlags = Invoke-ObfuscationScan -FilePath $jar.FullName
 
@@ -1265,6 +1408,7 @@ foreach ($jar in $jarFiles) {
             $obfuscatedMods += [PSCustomObject]@{
                 FileName = $jar.Name
                 Flags    = $obfFlags
+                Hidden   = ($jar.Attributes -band [System.IO.FileAttributes]::Hidden)
             }
             $verifiedMods = $verifiedMods | Where-Object { $_.FileName -ne $jar.Name }
         }
@@ -1289,27 +1433,30 @@ $recentHits   = Invoke-RecentLnkScan
 Write-HistoryScanReport -PrefetchHits $prefetchHits -RecentHits $recentHits
 
 if ($verifiedMods.Count -gt 0) {
-    Write-SectionHeader -Title "VERIFIED MODS" -Count $verifiedMods.Count -DotColor Green -CountColor Green
+    Write-SectionHeader -Title "VERIFIED MODS" -Count $verifiedMods.Count -DotColor Magenta -CountColor Magenta
     Write-Rule "─" 76 DarkGray
     foreach ($mod in $verifiedMods) {
         Write-Host "  ✓ " -ForegroundColor Green -NoNewline
         Write-Host "$($mod.ModName)" -ForegroundColor White -NoNewline
         Write-Host " → " -ForegroundColor Gray -NoNewline
-        Write-Host "$($mod.FileName)" -ForegroundColor DarkGray
+        Write-Host "$($mod.FileName)" -ForegroundColor DarkGray -NoNewline
+        if ($mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta }
     }
     Write-Host ""
 }
 
 if ($unknownMods.Count -gt 0) {
-    Write-SectionHeader -Title "UNKNOWN MODS" -Count $unknownMods.Count -DotColor Yellow -CountColor Yellow
+    Write-SectionHeader -Title "UNKNOWN MODS" -Count $unknownMods.Count -DotColor Magenta -CountColor Magenta
     Write-Rule "─" 76 DarkGray
     foreach ($mod in $unknownMods) {
-        $name = $mod.FileName
+        $name = if ($mod.ModName) { "$($mod.ModName) - $($mod.FileName)" } else { $mod.FileName }
         if ($name.Length -gt 50) { $name = $name.Substring(0,47) + "..." }
         $topLine    = "  ╔═ ? " + $name + " " + ("═" * (65 - $name.Length)) + "╗"
         $sourceText = if ($mod.DownloadSource) { "Source: $($mod.DownloadSource)" } else { "Source: ?" }
+        if ($mod.MetadataSource) { $sourceText += " | Metadata: $($mod.MetadataSource)" }
         $bottomLine = "  ╚═ " + $sourceText + " " + ("═" * (67 - $sourceText.Length)) + "╝"
         Write-Host $topLine    -ForegroundColor Yellow
+        if ($mod.Hidden) { Write-Host "    [MOD IS HIDDEN]" -ForegroundColor Magenta }
         Write-Host $bottomLine -ForegroundColor Yellow
         Write-Host ""
     }
@@ -1325,7 +1472,7 @@ if ($suspiciousMods.Count -gt 0) {
 }
 
 if ($bypassMods.Count -gt 0) {
-    Write-SectionHeader -Title "BYPASS / INJECTION DETECTED" -Count $bypassMods.Count -DotColor Magenta -CountColor Magenta
+    Write-SectionHeader -Title "BYPASS / INJECTION DETECTED" -Count $bypassMods.Count -DotColor DarkMagenta -CountColor Magenta
     Write-Rule "─" 76 DarkGray
     Write-Host ""
     foreach ($mod in $bypassMods) {
@@ -1334,7 +1481,7 @@ if ($bypassMods.Count -gt 0) {
 }
 
 if ($obfuscatedMods.Count -gt 0) {
-    Write-SectionHeader -Title "OBFUSCATED MODS" -Count $obfuscatedMods.Count -DotColor DarkYellow -CountColor Yellow
+    Write-SectionHeader -Title "OBFUSCATED MODS" -Count $obfuscatedMods.Count -DotColor Magenta -CountColor Magenta
     Write-Rule "─" 76 DarkGray
     Write-Host ""
     foreach ($mod in $obfuscatedMods) {
@@ -1377,7 +1524,7 @@ if ($jvmFlags.Count -gt 0) {
     Write-Host ""
 }
 
-Write-Host "📊 SUMMARY" -ForegroundColor DarkMagenta
+Write-Host "📊 SUMMARY" -ForegroundColor Magenta
 Write-Rule "━" 76 Magenta
 Write-Host "  Total files scanned: " -ForegroundColor Gray -NoNewline; Write-Host "$totalFiles"                   -ForegroundColor White
 Write-Host "  Verified mods:       " -ForegroundColor Gray -NoNewline; Write-Host "$($verifiedMods.Count)"        -ForegroundColor Green
