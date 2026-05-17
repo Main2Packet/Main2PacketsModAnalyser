@@ -1,4 +1,4 @@
-$Host.UI.RawUI.ForegroundColor = "DarkRed"
+$Host.UI.RawUI.ForegroundColor = "DarkMagenta"
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding  = [System.Text.Encoding]::UTF8
@@ -39,12 +39,12 @@ $Banner = @"
 
 "@
 
-Write-Host $Banner -ForegroundColor DarkRed
+Write-Host $Banner -ForegroundColor DarkMagenta
 Write-Host ""
 Write-Host "                Built by " -ForegroundColor Gray -NoNewline
-Write-Host "Main2Packet" -ForegroundColor DarkRed
+Write-Host "Main2Packet" -ForegroundColor DarkMagenta
 Write-Host ""
-Write-Host ("━" * 76) -ForegroundColor DarkRed
+Write-Host ("━" * 76) -ForegroundColor DarkMagenta
 Write-Host
 
 Write-Host "Enter path to the mods folder: " -NoNewline
@@ -82,7 +82,7 @@ if ($mcProcess) {
     try {
         $startTime = $mcProcess.StartTime
         $uptime = (Get-Date) - $startTime
-        Write-Host "🕒 { Minecraft Uptime }" -ForegroundColor DarkRed
+        Write-Host "🕒 { Minecraft Uptime }" -ForegroundColor DarkMagenta
         Write-Host "   $($mcProcess.Name) PID $($mcProcess.Id) started at $startTime" -ForegroundColor Gray
         Write-Host "   Running for: $($uptime.Hours)h $($uptime.Minutes)m $($uptime.Seconds)s" -ForegroundColor Gray
         Write-Host ""
@@ -924,7 +924,7 @@ function Get-PrefetchExePathFromBytes {
 function Invoke-PrefetchScan {
     param(
         [string]$BasePath = "$env:SystemRoot\Prefetch",
-        [string[]]$Keywords = @("198m","prestige")
+        [string[]]$Keywords = @("198m","198macro","prestige","prestigeclient","prestigeinjector","doomsday")
     )
     $hits = [System.Collections.Generic.List[psobject]]::new()
     if (-not (Test-Path $BasePath)) { return $hits }
@@ -947,7 +947,7 @@ function Invoke-PrefetchScan {
 function Invoke-RecentLnkScan {
     param(
         [string]$BasePath = "$env:APPDATA\Microsoft\Windows\Recent",
-        [string[]]$Keywords = @("198m","prestige")
+        [string[]]$Keywords = @("198m","198macro","prestige","prestigeclient","prestigeinjector","doomsday")
     )
     $hits = [System.Collections.Generic.List[psobject]]::new()
     if (-not (Test-Path $BasePath)) { return $hits }
@@ -985,7 +985,7 @@ function Write-HistoryScanReport {
     )
     Write-SectionHeader -Title "SYSTEM HISTORY SCAN" -Count (($PrefetchHits.Count + $RecentHits.Count)) -DotColor Yellow -CountColor Yellow
     if ($PrefetchHits.Count -gt 0) {
-        Write-Host "  Prefetch matches:" -ForegroundColor DarkYellow
+        Write-Host "  Prefetch matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $PrefetchHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
             Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.LastRun -or 'unknown')" -ForegroundColor DarkGray
@@ -994,7 +994,7 @@ function Write-HistoryScanReport {
         Write-Host ""
     }
     if ($RecentHits.Count -gt 0) {
-        Write-Host "  Recent shortcut matches:" -ForegroundColor DarkYellow
+        Write-Host "  Recent shortcut matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $RecentHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
             Write-Host "       Target:      " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.TargetPath -or 'unknown')" -ForegroundColor DarkGray
@@ -1031,46 +1031,46 @@ function Write-SectionHeader {
 function Write-SuspiciousCard {
     param($Mod)
 
-    Write-Host ("  " + ("─" * 70)) -ForegroundColor DarkRed
-    Write-Host "  │ " -ForegroundColor DarkRed -NoNewline
-    Write-Host " FLAGGED " -ForegroundColor White -BackgroundColor DarkRed -NoNewline
+    Write-Host ("  " + ("─" * 70)) -ForegroundColor DarkMagenta
+    Write-Host "  │ " -ForegroundColor DarkMagenta -NoNewline
+    Write-Host " FLAGGED " -ForegroundColor White -BackgroundColor DarkMagenta -NoNewline
     Write-Host "  " -NoNewline
     Write-Host $Mod.FileName -ForegroundColor Yellow
-    Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkRed
+    Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkMagenta
 
     if ($Mod.Patterns.Count -gt 0) {
-        Write-Host "  │" -ForegroundColor DarkRed
-        Write-Host "  │  " -ForegroundColor DarkRed -NoNewline
+        Write-Host "  │" -ForegroundColor DarkMagenta
+        Write-Host "  │  " -ForegroundColor DarkMagenta -NoNewline
         Write-Host "PATTERNS" -ForegroundColor DarkGray
         foreach ($p in ($Mod.Patterns | Sort-Object)) {
-            Write-Host "  │    " -ForegroundColor DarkRed -NoNewline
+            Write-Host "  │    " -ForegroundColor DarkMagenta -NoNewline
             Write-Host $p -ForegroundColor Red
         }
     }
 
     $uniqueStrings = $Mod.Strings | Where-Object { $Mod.Patterns -notcontains $_ } | Sort-Object
     if ($uniqueStrings.Count -gt 0) {
-        Write-Host "  │" -ForegroundColor DarkRed
-        Write-Host "  │  " -ForegroundColor DarkRed -NoNewline
+        Write-Host "  │" -ForegroundColor DarkMagenta
+        Write-Host "  │  " -ForegroundColor DarkMagenta -NoNewline
         Write-Host "STRINGS" -ForegroundColor DarkGray
         foreach ($s in $uniqueStrings) {
-            Write-Host "  │    " -ForegroundColor DarkRed -NoNewline
+            Write-Host "  │    " -ForegroundColor DarkMagenta -NoNewline
             Write-Host $s -ForegroundColor DarkYellow
         }
     }
 
     if ($Mod.Fullwidth -and $Mod.Fullwidth.Count -gt 0) {
-        Write-Host "  │" -ForegroundColor DarkRed
-        Write-Host "  │  " -ForegroundColor DarkRed -NoNewline
+        Write-Host "  │" -ForegroundColor DarkMagenta
+        Write-Host "  │  " -ForegroundColor DarkMagenta -NoNewline
         Write-Host "FULLWIDTH UNICODE" -ForegroundColor DarkGray
         foreach ($fw in ($Mod.Fullwidth | Sort-Object)) {
-            Write-Host "  │    " -ForegroundColor DarkRed -NoNewline
-            Write-Host "FULLWIDTH: $fw" -ForegroundColor DarkRed
+            Write-Host "  │    " -ForegroundColor DarkMagenta -NoNewline
+            Write-Host "FULLWIDTH: $fw" -ForegroundColor DarkMagenta
         }
     }
 
-    Write-Host "  │" -ForegroundColor DarkRed
-    Write-Host ("  " + ("─" * 70)) -ForegroundColor DarkRed
+    Write-Host "  │" -ForegroundColor DarkMagenta
+    Write-Host ("  " + ("─" * 70)) -ForegroundColor DarkMagenta
     Write-Host ""
 }
 
@@ -1151,7 +1151,7 @@ $bypassMods      = @()
 $obfuscatedMods  = @()
 
 try {
-    $jarFiles = Get-ChildItem -Path $modsPath -Filter *.jar -ErrorAction Stop
+    $jarFiles = Get-ChildItem -Path $modsPath -Filter *.jar -Force -ErrorAction Stop
 } catch {
     Write-Host "❌ Error accessing directory: $_" -ForegroundColor Red
     Write-Host "Press any key to exit..." -ForegroundColor Gray
@@ -1174,7 +1174,7 @@ $spinnerFrames = @("⣾","⣽","⣻","⢿","⡿","⣟","⣯","⣷")
 $totalFiles    = $jarFiles.Count
 $idx           = 0
 
-Write-Host "🔍 Pass 1 — Hash verification (Modrinth + Megabase)..." -ForegroundColor DarkRed
+Write-Host "🔍 Pass 1 — Hash verification (Modrinth + Megabase)..." -ForegroundColor DarkMagenta
 
 foreach ($jar in $jarFiles) {
     $idx++
@@ -1203,7 +1203,7 @@ foreach ($jar in $jarFiles) {
 Write-Host "`r$(' ' * 100)`r" -NoNewline
 
 $modWord = if ($totalFiles -eq 1) { "mod" } else { "mods" }
-Write-Host "🔬 Pass 2 — Deep-scanning all $totalFiles $modWord..." -ForegroundColor DarkRed
+Write-Host "🔬 Pass 2 — Deep-scanning all $totalFiles $modWord..." -ForegroundColor DarkMagenta
 $idx = 0
 
 foreach ($jar in $jarFiles) {
@@ -1248,7 +1248,7 @@ foreach ($jar in $jarFiles) {
 
 Write-Host "`r$(' ' * 100)`r" -NoNewline
 
-Write-Host "🔎 Pass 4 — Obfuscation analysis on all $totalFiles $modWord..." -ForegroundColor DarkRed
+Write-Host "🔎 Pass 4 — Obfuscation analysis on all $totalFiles $modWord..." -ForegroundColor DarkMagenta
 $idx = 0
 
 foreach ($jar in $jarFiles) {
@@ -1274,7 +1274,7 @@ foreach ($jar in $jarFiles) {
 Write-Host "`r$(' ' * 100)`r" -NoNewline
 
 $jvmFlags = @()
-Write-Host "⚡ Pass 5 — Scanning JVM for agents and injections..." -ForegroundColor DarkYellow
+Write-Host "⚡ Pass 5 — Scanning JVM for agents and injections..." -ForegroundColor DarkMagenta
 $jvmFlags = Invoke-JvmScan
 if ($jvmFlags.Count -gt 0) {
     Write-Host "   ⚠️  JVM issues found!" -ForegroundColor Yellow
@@ -1377,8 +1377,8 @@ if ($jvmFlags.Count -gt 0) {
     Write-Host ""
 }
 
-Write-Host "📊 SUMMARY" -ForegroundColor DarkRed
-Write-Rule "━" 76 Blue
+Write-Host "📊 SUMMARY" -ForegroundColor DarkMagenta
+Write-Rule "━" 76 Magenta
 Write-Host "  Total files scanned: " -ForegroundColor Gray -NoNewline; Write-Host "$totalFiles"                   -ForegroundColor White
 Write-Host "  Verified mods:       " -ForegroundColor Gray -NoNewline; Write-Host "$($verifiedMods.Count)"        -ForegroundColor Green
 Write-Host "  Unknown mods:        " -ForegroundColor Gray -NoNewline; Write-Host "$($unknownMods.Count)"         -ForegroundColor Yellow
@@ -1388,14 +1388,14 @@ Write-Host "  Obfuscated mods:     " -ForegroundColor Gray -NoNewline; Write-Hos
 Write-Host "  JVM issues:          " -ForegroundColor Gray -NoNewline; Write-Host "$($jvmFlags.Count)"            -ForegroundColor Yellow
 Write-Host "  History hits:        " -ForegroundColor Gray -NoNewline; Write-Host "$($prefetchHits.Count + $recentHits.Count)" -ForegroundColor Yellow
 Write-Host
-Write-Rule "━" 76 Blue
+Write-Rule "━" 76 Magenta
 Write-Host ""
-Write-Host "  ✨ Analysis complete! Thanks for using Main2Packet Mod Analyzer" -ForegroundColor DarkRed
+Write-Host "  ✨ Analysis complete! Thanks for using Main2Packet Mod Analyzer" -ForegroundColor DarkMagenta
 Write-Host ""
 Write-Host "  👤 Built by: " -ForegroundColor White -NoNewline
-Write-Host "Main2Packet" -ForegroundColor DarkRed
+Write-Host "Main2Packet" -ForegroundColor DarkMagenta
 Write-Host ""
-Write-Rule "━" 76 Blue
+Write-Rule "━" 76 Magenta
 Write-Host ""
 Write-Host "Press any key to exit..." -ForegroundColor DarkGray
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
