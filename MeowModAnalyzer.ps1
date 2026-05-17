@@ -177,16 +177,35 @@ $cheatStrings = @(
     "Anchor_Safe", "anchor_Safe", "Anchor_safe", "anchor_safe",
     "Anchor_Pro", "anchor_Pro", "Anchor_pro", "anchor_pro",
     "Auto_Anchor_Alt", "auto_Anchor_Alt", "Auto_anchor_Alt", "auto_anchor_Alt",
-    "AutoTotem", "autototem", "auto totem", "InventoryTotem",
-    "inventorytotem", "HoverTotem", "hover totem", "legittotem",
+    "AutoTotem", "autototem", "auto totem", "Auto_Totem", "auto_Totem", "auto_totem", "InventoryTotem",
+    "inventorytotem", "HoverTotem", "hover totem", "Hover_Totem", "hover_Totem", "hover_totem", "legittotem",
+    "ＡｕｔｏＴｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ",
+    "ＨｏｖｅｒＴｏｔｅｍ", "Ｈｏｖｅｒ Ｔｏｔｅｍ",
+    "ＩｎｖｅｎｔｏｒｙＴｏｔｅｍ", "Ａｕｔｏ Ｉｎｖｅｎｔｏｒｙ Ｔｏｔｅｍ",
+    "Ａｕｔｏ Ｔｏｔｅｍ Ｈｉｔ", "AutoTotem_Hit", "autoTotem_Hit", "auto_totem_hit", "Auto_Totem_Hit", "auto_Totem_Hit",
+    "AutoPot", "autopot", "auto pot", "Auto_pot", "auto_pot", "Auto_Pot", "AUTO_POT", "Auto_Pot_Refill", "auto_Pot_Refill", "auto_pot_refill", "Auto_pot_refill", "AUTO_POT_REFILL",
+    "Auto_Pot_Hit", "auto_Pot_Hit", "auto_pot_hit", "Auto_pot_hit", "AUTO_POT_HIT", "Auto_Pot_Slot", "auto_Pot_Slot", "auto_pot_slot", "Auto_pot_slot", "AUTO_POT_SLOT",
+    "Auto_Pot_Use", "auto_Pot_Use", "auto_pot_use", "Auto_pot_use", "AUTO_POT_USE", "Auto_Pot_Auto", "auto_Pot_Auto", "auto_pot_auto", "Auto_pot_auto", "AUTO_POT_AUTO",
+    "Auto_Pot_Bot", "auto_Pot_Bot", "auto_pot_bot", "Auto_pot_bot", "AUTO_POT_BOT",
+    "AutoArmor", "autoarmor", "auto armor", "Auto_Armor", "auto_Armor", "auto_armor", "Auto_armor", "AUTO_ARMOR", "Auto_Armor_Equip", "auto_Armor_Equip",
+    "auto_armor_equip", "Auto_armor_equip", "AUTO_ARMOR_EQUIP", "Auto_Armor_Swap", "auto_Armor_Swap", "auto_armor_swap", "Auto_armor_swap", "AUTO_ARMOR_SWAP", "Auto_Armor_Set", "auto_Armor_Set",
+    "auto_armor_set", "Auto_armor_set", "AUTO_ARMOR_SET", "Auto_Armor_Bot", "auto_Armor_Bot", "auto_armor_bot", "Auto_armor_bot", "AUTO_ARMOR_BOT",
+    "Auto_Crystal", "auto_Crystal", "auto_crystal", "Auto_crystal", "AUTO_CRYSTAL", "Auto_Crystal_Alt", "auto_Crystal_Alt", "auto_crystal_alt", "Auto_crystal_alt", "AUTO_CRYSTAL_ALT",
+    "Auto_Crystal_Bot", "auto_Crystal_Bot", "auto_crystal_bot", "Auto_crystal_bot", "AUTO_CRYSTAL_BOT", "Auto_Crystal_Assist", "auto_Crystal_Assist", "auto_crystal_assist", "Auto_crystal_assist", "AUTO_CRYSTAL_ASSIST",
+    "Auto_Crystal_Helper", "auto_Crystal_Helper", "auto_crystal_helper", "Auto_crystal_helper", "AUTO_CRYSTAL_HELPER",
+    "Auto_Anchor", "auto_Anchor", "auto_anchor", "Auto_anchor", "AUTO_ANCHOR", "Anchor_Macro", "anchor_Macro", "anchor_macro", "Anchor_macro", "ANCHOR_MACRO",
+    "Safe_Anchor", "safe_Anchor", "safe_anchor", "Safe_anchor", "SAFE_ANCHOR", "Double_Anchor", "double_Anchor", "double_anchor", "Double_anchor", "DOUBLE_ANCHOR",
+    "Air_Anchor", "air_Anchor", "air_anchor", "Air_anchor", "AIR_ANCHOR", "Has_Anchor", "has_Anchor", "Has_anchor", "has_anchor", "HAS_ANCHOR",
+    "Silent Rotations", "SilentRotations", "Silent_Rotations", "silent_Rotations", "silent_rotations", "Silent_rotations", "SILENT_ROTATIONS", "Silent_Rotation", "silent_Rotation", "silent_rotation",
+    "Silent_rotation", "SILENT_ROTATION", "Silent_Rotations_Mode", "silent_Rotations_Mode", "silent_rotations_mode", "Silent_rotations_mode", "SILENT_ROTATIONS_MODE", "Silent_Rotate", "silent_Rotate", "silent_rotate",
+    "Silent_rotate", "SILENT_ROTATE",
+    "AutoArmor", "autoarmor", "auto armor",
+    "ＡｕｔｏＰｏｔ", "Ａｕｔｏ Ｐｏｔ",
+    "Ａｕｔｏ Ｐｏｔ Ｒｅｆｉｌｌ", "AutoPotRefill",
     "ＡｕｔｏＴｏｔｅｍ", "Ａｕｔｏ Ｔｏｔｅｍ",
     "ＨｏｖｅｒＴｏｔｅｍ", "Ｈｏｖｅｒ Ｔｏｔｅｍ",
     "ＩｎｖｅｎｔｏｒｙＴｏｔｅｍ", "Ａｕｔｏ Ｉｎｖｅｎｔｏｒｙ Ｔｏｔｅｍ",
     "Ａｕｔｏ Ｔｏｔｅｍ Ｈｉｔ",
-    "AutoPot", "autopot", "auto pot", "speedPotSlot", "strengthPotSlot",
-    "AutoArmor", "autoarmor", "auto armor",
-    "ＡｕｔｏＰｏｔ", "Ａｕｔｏ Ｐｏｔ",
-    "Ａｕｔｏ Ｐｏｔ Ｒｅｆｉｌｌ", "AutoPotRefill",
     "ＡｕｔｏＡｒｍｏｒ", "Ａｕｔｏ Ａｒｍｏｒ",
     "preventSwordBlockBreaking", "preventSwordBlockAttack",
     "ShieldDisabler", "ShieldBreaker",
@@ -197,7 +216,7 @@ $cheatStrings = @(
     "AutoClicker",
     "ＡｕｔｏＣｌｉｃｋｅｒ",
     "Failed to switch to mace after axe!",
-    "AutoMace", "MaceSwap", "SpearSwap",
+    "AutoMace", "Auto_Mace", "auto_Mace", "auto_mace", "MaceSwap", "SpearSwap",
     "ＡｕｔｏＭａｃｅ", "Ａｕｔｏ Ｍａｃｅ",
     "ＭａｃｅＳｗａｐ", "Ｍａｃｅ Ｓｗａｐ",
     "Ｓｐｅａｒ Ｓｗａｐ", "Ａｕｔｏｍａｔｉｃａｌｌｙ ａｘｅ ａｎｄ ｍａｃｅ ｓｈｉｅｌｄｅｄ ｐｌａｙｅｒｓ",
@@ -209,10 +228,10 @@ $cheatStrings = @(
     "Aim:assist", "Aim/assist", "Aim|assist", "Aim~assist", "Aim*assist",
     "aim.assist", "aim!assist", "aim?assist", "aim-assist",
     "aim:assist", "aim/assist", "aim|assist", "aim~assist", "aim*assist",
-    "triggerbot", "trigger bot",
+    "triggerbot", "trigger bot", "trigger_bot", "Trigger_Bot", "trigger_Bot",
     "ＡｉｍＡｓｓｉｓｔ", "Ａｉｍ Ａｓｓｉｓｔ",
     "ＴｒｉｇｇｅｒＢｏｔ", "Ｔｒｉｇｇｅｒ Ｂｏｔ",
-    "Silent Rotations", "SilentRotations",
+    "Silent Rotations", "SilentRotations", "Silent_Rotations", "silent_Rotations", "silent_rotations", "Silent_rotations",
     "Ｓｉｌｅｎｔ Ｒｏｔａｔｉｏｎｓ",
     "FakeInv", "swapBackToOriginalSlot",
     "FakeLag", "pingspoof", "ping spoof",
@@ -255,33 +274,33 @@ $cheatStrings = @(
     "Click Simulation", "Ｃｌｉｃｋ Ｓｉｍｕｌａｔｉｏｎ",
     "On RMB", "Ｏｎ ＲＭＢ",
     "No Count Glitch", "Ｎｏ Ｃｏｕｎｔ Ｇｌｉｔｃｈ",
-    "No Bounce", "NoBounce", "Ｎｏ Ｂｏｕｎｃｅ", "ＮｏＢｏｕｎｃｅ",
-    "Ｒｅｍｏｖｅｓ ｔｈｅ ｃｒｙｓｔａｌ ｂｏｕｎｃｅ ａｎｉｍａｔｉｏｎ",
-    "Place Delay", "Ｐｌａｃｅ Ｄｅｌａｙ",
-    "Break Delay", "Ｂｒｅａｋ Ｄｅｌａｙ",
+    "No Bounce", "NoBounce", "Ｎｏ Ｂｏｕｎｃｅ", "ＮｏＢｏｕｎｃｅ", "No_Bounce", "no_Bounce", "no_bounce",
+    "Ｒｅｍｏｖｅｓ ｔｈｅ ｃｒｙｓｔａｌ ｂｏｕｎｃｅ ｂａｎｄ ａｎｉｍａｔｉｏｎ",
+    "Place Delay", "Ｐｌａｃｅ Ｄｅｌａｙ", "Place_Delay", "place_Delay", "place_delay", "Place_delay",
+    "Break Delay", "Ｂｒｅａｋ Ｄｅｌａｙ", "Break_Delay", "break_Delay", "break_delay",
     "Fast Mode", "Ｆａｓｔ Ｍｏｄｅ",
-    "Place Chance", "Ｐｌａｃｅ Ｃｈａｎｃｅ",
-    "Break Chance", "Ｂｒｅａｋ Ｃｈａｎｃｅ",
-    "Stop On Kill", "Ｓｔｏｐ Ｏｎ Ｋｉｌｌ",
-    "Ｄａｍａｇｅ Ｔｉｃｋ", "damagetick",
-    "Anti Weakness", "Ａｎｔｉ Ｗｅａｋｎｅｓｓ",
+    "Place Chance", "Ｐｌａｃｅ Ｃｈａｎｃｅ", "Place_Chance", "place_Chance", "place_change", "Place_change",
+    "Break Chance", "Ｂｒｅａｋ Ｃｈａｎｃｅ", "Break_Chance", "break_Chance", "break_change", "Break_change",
+    "Stop On Kill", "Ｓｔｏｐ Ｏｎ Ｋｉｌｌ", "Stop_On_Kill", "stop_On_Kill", "stop_on_kill", "Stop_on_kill",
+    "Ｄａｍａｇｅ Ｔｉｃｋ", "damagetick", "Damage_Tick", "damage_Tick", "damage_tick", "damage_ticket",
+    "Anti Weakness", "Ａｎｔｉ Ｗｅａｋｎｅｓｓ", "Anti_Weakness", "anti_Weakness", "anti_weakness",
     "Particle Chance", "Ｐａｒｔｉｃｌｅ Ｃｈａｎｃｅ",
     "Trigger Key", "Ｔｒｉｇｇｅｒ Ｋｅｙ",
-    "Switch Delay", "Ｓｗｉｔｃｈ Ｄｅｌａｙ",
-    "Totem Slot", "Ｔｏｔｅｍ Ｓｌｏｔ",
+    "Switch Delay", "Ｓｗｉｔｃｈ Ｄｅｌａｙ", "Switch_Delay", "switch_Delay", "switch_delay",
+    "Totem Slot", "Ｔｏｔｅｍ Ｓｌｏｔ", "Totem_Slot", "totem_Slot", "totem_slot",
     "Silent Rotations", "Ｓｉｌｅｎｔ Ｒｏｔａｔｉｏｎｓ",
     "Smooth Rotations", "Ｓｍｏｏｔｈ Ｒｏｔａｔｉｏｎｓ",
-    "Rotation Speed", "Ｒｏｔａｔｉｏｎ Ｓｐｅｅｄ",
-    "Use Easing", "Ｕｓｅ Ｅａｓｉｎｇ",
-    "Easing Strength", "Ｅａｓｉｎｇ Ｓｔｒｅｎｇｔｈ",
-    "While Use", "Ｗｈｉｌｅ Ｕｓｅ",
+    "Rotation Speed", "Ｒｏｔａｔｉｏｎ Ｓｐｅｅｄ", "Rotation_Speed", "rotation_Speed", "rotation_speed",
+    "Use Easing", "Ｕｓｅ Ｅａｓｉｎｇ", "Use_Easing", "use_Easing", "use_easing",
+    "Easing Strength", "Ｅａｓｉｎｇ Ｓｔｒｅｎｇｔｈ", "Easing_Strength", "easing_Strength", "easing_strength",
+    "While Use", "Ｗｈｉｌｅ Ｕｓｅ", "While_Use", "while_Use", "while_use",
     "Stop on Kill", "Ｓｔｏｐ ｏｎ Ｋｉｌｌ",
     "Click Simulation", "Ｃｌｉｃｋ Ｓｉｍｕｌａｔｉｏｎ",
     "Glowstone Delay", "Ｇｌｏｗｓｔｏｎｅ Ｄｅｌａｙ",
     "Glowstone Chance", "Ｇｌｏｗｓｔｏｎｅ Ｃｈａｎｃｅ",
-    "Explode Delay", "Ｅｘｐｌｏｄｅ Ｄｅｌａｙ",
-    "Explode Chance", "Ｅｘｐｌｏｄｅ Ｃｈａｎｃｅ",
-    "Explode Slot", "Ｅｘｐｌｏｄｅ Ｓｌｏｔ",
+    "Explode Delay", "Ｅｘｐｌｏｄｅ Ｄｅｌａｙ", "Explode_Delay", "explode_Delay", "explode_delay",
+    "Explode Chance", "Ｅｘｐｌｏｄｅ Ｃｈａｎｃｅ", "Explode_Chance", "explode_Chance", "explode_chance",
+    "Explode Slot", "Ｅｘｐｌｏｄｅ Ｓｌｏｔ", "Explode_Slot", "explode_Slot", "explode_slot",
     "Only Charge", "Ｏｎｌｙ Ｃｈａｒｇｅ",
     "Anchor Macro", "Ａｎｃｈｏｒ Ｍａｃｒｏ",
     "Reach Distance", "Ｒｅａｃｈ Ｄｉｓｔａｎｃｅ",
@@ -320,7 +339,7 @@ $cheatStrings = @(
     "Totem First", "Ｔｏｔｅｍ Ｆｉｒｓｔ",
     "Drop Interval", "Ｄｒｏｐ Ｉｎｔｅｒｖａｌ",
     "Random Pattern", "Ｒａｎｄｏｍ Ｐａｔｔｅｒｎ",
-    "Loot Yeeter", "Ｌｏｏｔ Ｙｅｅｔｅｒ",
+    "Loot Yeeter", "Ｌｏｏｔ Ｙｅｅｔｅｒ", "Stay_Open_For_Loot_Yeeter", "stay_open_for_loot_yeeter", "Stay_Open_For_Loot_Yeater", "stay_open_for_loot_yeater",
     "Horizontal Aim Speed", "Ｈｏｒｉｚｏｎｔａｌ Ａｉｍ Ｓｐｅｅｄ",
     "Vertical Aim Speed", "Ｖｅｒｔｉｃａｌ Ａｉｍ Ｓｐｅｅｄ",
     "Include Head", "Ｉｎｃｌｕｄｅ Ｈｅａｄ",
@@ -1194,6 +1213,55 @@ function Invoke-RecentLnkScan {
     return $hits
 }
 
+function Invoke-TaskManagerProcessScan {
+    param(
+        [string[]]$Keywords = @("198m","198macro","prestige","prestige-injector","prestigeinjector")
+    )
+    $hits = [System.Collections.Generic.List[psobject]]::new()
+    try {
+        $processes = Get-CimInstance Win32_Process -ErrorAction Stop
+    } catch {
+        return $hits
+    }
+    foreach ($proc in $processes) {
+        $nameLower = if ($proc.Name) { $proc.Name.ToLower() } else { '' }
+        $cmdLower  = if ($proc.CommandLine) { $proc.CommandLine.ToLower() } else { '' }
+        foreach ($keyword in $Keywords) {
+            if ($nameLower -like "*${keyword}*" -or ($cmdLower -and $cmdLower -like "*${keyword}*")) {
+                $hits.Add([PSCustomObject]@{
+                    ProcessName = $proc.Name
+                    ProcessId   = $proc.ProcessId
+                    CommandLine = $proc.CommandLine
+                })
+                break
+            }
+        }
+    }
+    return $hits
+}
+
+function Write-TaskManagerScanReport {
+    param(
+        $ProcessHits
+    )
+
+    $ProcessHits = @($ProcessHits | Where-Object { $_ -ne $null })
+    Write-SectionHeader -Title "TASKMANAGER PROCESS SCAN" -Count $ProcessHits.Count -DotColor Magenta -CountColor Magenta
+    if ($ProcessHits.Count -gt 0) {
+        foreach ($hit in $ProcessHits) {
+            Write-Host "  • $($hit.ProcessName) PID $($hit.ProcessId)" -ForegroundColor White
+            if ($null -ne $hit.CommandLine -and $hit.CommandLine -ne '') {
+                Write-Host "       Command:   " -ForegroundColor Gray -NoNewline
+                Write-Host "$($hit.CommandLine)" -ForegroundColor DarkGray
+            }
+        }
+        Write-Host ""
+    } else {
+        Write-Host "  No suspicious TaskManager processes found." -ForegroundColor DarkGray
+        Write-Host ""
+    }
+}
+
 function Write-HistoryScanReport {
     param(
         $PrefetchHits,
@@ -1526,6 +1594,8 @@ Write-Host "`r$(' ' * 100)`r" -NoNewline
 
 $prefetchHits = Invoke-PrefetchScan
 $recentHits   = Invoke-RecentLnkScan
+$processHits  = Invoke-TaskManagerProcessScan
+Write-TaskManagerScanReport -ProcessHits $processHits
 Write-HistoryScanReport -PrefetchHits $prefetchHits -RecentHits $recentHits
 
 if ($verifiedMods.Count -gt 0) {
