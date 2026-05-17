@@ -41,10 +41,8 @@ $Banner = @"
 
 Write-Host $Banner -ForegroundColor DarkRed
 Write-Host ""
-Write-Host "                Made with " -ForegroundColor Gray -NoNewline
-Write-Host "♥ " -ForegroundColor Red -NoNewline
-Write-Host "by " -ForegroundColor Gray -NoNewline
-Write-Host "MeowTonynoh" -ForegroundColor DarkRed
+Write-Host "                Built by " -ForegroundColor Gray -NoNewline
+Write-Host "Main2Packet" -ForegroundColor DarkRed
 Write-Host ""
 Write-Host ("━" * 76) -ForegroundColor DarkRed
 Write-Host
@@ -886,6 +884,130 @@ function Invoke-JvmScan {
     return $results
 }
 
+function Get-PrefetchLastRunFromBytes {
+    param([byte[]]$Bytes)
+    $validTimes = @()
+    $now = Get-Date
+    for ($i = 0; $i -le $Bytes.Length - 8; $i += 8) {
+        $value = [BitConverter]::ToInt64($Bytes, $i)
+        if ($value -le 0) { continue }
+        try {
+            $dt = [DateTime]::FromFileTimeUtc($value).ToLocalTime()
+            if ($dt -ge (Get-Date '2000-01-01') -and $dt -le $now.AddDays(2)) {
+                $validTimes += $dt
+            }
+        } catch { }
+    }
+    if ($validTimes.Count -gt 0) { return ($validTimes | Sort-Object)[-1] }
+    return $null
+}
+
+function Get-PrefetchExePathFromBytes {
+    param([byte[]]$Bytes)
+    $patterns = @(
+        '([A-Za-z]:\\[^\x00]+?\.exe)',
+        '([A-Za-z]:\\[^\x00]+?\.EXE)'
+    )
+    $unicode = [System.Text.Encoding]::Unicode.GetString($Bytes)
+    foreach ($pattern in $patterns) {
+        $matches = [regex]::Matches($unicode, $pattern, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        if ($matches.Count -gt 0) { return $matches[$matches.Count - 1].Groups[1].Value.Trim() }
+    }
+    $ascii = [System.Text.Encoding]::ASCII.GetString($Bytes)
+    foreach ($pattern in $patterns) {
+        $matches = [regex]::Matches($ascii, $pattern, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        if ($matches.Count -gt 0) { return $matches[$matches.Count - 1].Groups[1].Value.Trim() }
+    }
+    return $null
+}
+
+function Invoke-PrefetchScan {
+    param(
+        [string]$BasePath = "$env:SystemRoot\Prefetch",
+        [string[]]$Keywords = @("198m","prestige")
+    )
+    $hits = [System.Collections.Generic.List[psobject]]::new()
+    if (-not (Test-Path $BasePath)) { return $hits }
+    foreach ($file in Get-ChildItem -Path $BasePath -Filter *.pf -ErrorAction SilentlyContinue) {
+        $nameLower = $file.Name.ToLower()
+        if (-not ($Keywords | Where-Object { $nameLower -like "*$_*" })) { continue }
+        $bytes = Get-Content -Path $file.FullName -Encoding Byte -ErrorAction SilentlyContinue
+        $exePath = Get-PrefetchExePathFromBytes -Bytes $bytes
+        $lastRun = Get-PrefetchLastRunFromBytes -Bytes $bytes
+        $hits.Add([PSCustomObject]@{
+            FileName   = $file.Name
+            PrefetchPath = $exePath
+            LastRun    = $lastRun
+            FilePath   = $file.FullName
+        })
+    }
+    return $hits
+}
+
+function Invoke-RecentLnkScan {
+    param(
+        [string]$BasePath = "$env:APPDATA\Microsoft\Windows\Recent",
+        [string[]]$Keywords = @("198m","prestige")
+    )
+    $hits = [System.Collections.Generic.List[psobject]]::new()
+    if (-not (Test-Path $BasePath)) { return $hits }
+    $shell = New-Object -ComObject WScript.Shell
+    foreach ($link in Get-ChildItem -Path $BasePath -Filter *.lnk -ErrorAction SilentlyContinue) {
+        $nameLower = $link.Name.ToLower()
+        try {
+            $shortcut = $shell.CreateShortcut($link.FullName)
+            $target = $shortcut.TargetPath
+        } catch {
+            $target = $null
+        }
+        $matched = $false
+        foreach ($keyword in $Keywords) {
+            if ($nameLower -like "*${keyword}*" -or ($target -and $target.ToLower() -like "*${keyword}*")) {
+                $matched = $true
+                break
+            }
+        }
+        if (-not $matched) { continue }
+        $hits.Add([PSCustomObject]@{
+            FileName = $link.Name
+            TargetPath = $target
+            LastUsed = $link.LastAccessTime
+            LinkPath = $link.FullName
+        })
+    }
+    return $hits
+}
+
+function Write-HistoryScanReport {
+    param(
+        [System.Collections.IEnumerable]$PrefetchHits,
+        [System.Collections.IEnumerable]$RecentHits
+    )
+    Write-SectionHeader -Title "SYSTEM HISTORY SCAN" -Count (($PrefetchHits.Count + $RecentHits.Count)) -DotColor Yellow -CountColor Yellow
+    if ($PrefetchHits.Count -gt 0) {
+        Write-Host "  Prefetch matches:" -ForegroundColor DarkYellow
+        foreach ($hit in $PrefetchHits) {
+            Write-Host "    • $($hit.FileName)" -ForegroundColor White
+            Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.LastRun -or 'unknown')" -ForegroundColor DarkGray
+            Write-Host "       Executable: " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.PrefetchPath -or 'unknown')" -ForegroundColor DarkGray
+        }
+        Write-Host ""
+    }
+    if ($RecentHits.Count -gt 0) {
+        Write-Host "  Recent shortcut matches:" -ForegroundColor DarkYellow
+        foreach ($hit in $RecentHits) {
+            Write-Host "    • $($hit.FileName)" -ForegroundColor White
+            Write-Host "       Target:      " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.TargetPath -or 'unknown')" -ForegroundColor DarkGray
+            Write-Host "       Last used:   " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.LastUsed -or 'unknown')" -ForegroundColor DarkGray
+        }
+        Write-Host ""
+    }
+    if ($PrefetchHits.Count -eq 0 -and $RecentHits.Count -eq 0) {
+        Write-Host "  No suspicious prefetch or recent link entries found." -ForegroundColor DarkGray
+        Write-Host ""
+    }
+}
+
 function Write-Rule {
     param([string]$Char = "─", [int]$Width = 76, [ConsoleColor]$Color = "DarkGray")
     Write-Host ($Char * $Width) -ForegroundColor $Color
@@ -943,7 +1065,7 @@ function Write-SuspiciousCard {
         Write-Host "FULLWIDTH UNICODE" -ForegroundColor DarkGray
         foreach ($fw in ($Mod.Fullwidth | Sort-Object)) {
             Write-Host "  │    " -ForegroundColor DarkRed -NoNewline
-            Write-Host "FULLWIDTH: $fw" -ForegroundColor Cyan
+            Write-Host "FULLWIDTH: $fw" -ForegroundColor DarkRed
         }
     }
 
@@ -1052,7 +1174,7 @@ $spinnerFrames = @("⣾","⣽","⣻","⢿","⡿","⣟","⣯","⣷")
 $totalFiles    = $jarFiles.Count
 $idx           = 0
 
-Write-Host "🔍 Pass 1 — Hash verification (Modrinth + Megabase)..." -ForegroundColor Cyan
+Write-Host "🔍 Pass 1 — Hash verification (Modrinth + Megabase)..." -ForegroundColor DarkRed
 
 foreach ($jar in $jarFiles) {
     $idx++
@@ -1081,7 +1203,7 @@ foreach ($jar in $jarFiles) {
 Write-Host "`r$(' ' * 100)`r" -NoNewline
 
 $modWord = if ($totalFiles -eq 1) { "mod" } else { "mods" }
-Write-Host "🔬 Pass 2 — Deep-scanning all $totalFiles $modWord..." -ForegroundColor Cyan
+Write-Host "🔬 Pass 2 — Deep-scanning all $totalFiles $modWord..." -ForegroundColor DarkRed
 $idx = 0
 
 foreach ($jar in $jarFiles) {
@@ -1126,7 +1248,7 @@ foreach ($jar in $jarFiles) {
 
 Write-Host "`r$(' ' * 100)`r" -NoNewline
 
-Write-Host "🔎 Pass 4 — Obfuscation analysis on all $totalFiles $modWord..." -ForegroundColor DarkCyan
+Write-Host "🔎 Pass 4 — Obfuscation analysis on all $totalFiles $modWord..." -ForegroundColor DarkRed
 $idx = 0
 
 foreach ($jar in $jarFiles) {
@@ -1161,6 +1283,10 @@ if ($jvmFlags.Count -gt 0) {
 }
 
 Write-Host "`r$(' ' * 100)`r" -NoNewline
+
+$prefetchHits = Invoke-PrefetchScan
+$recentHits   = Invoke-RecentLnkScan
+Write-HistoryScanReport -PrefetchHits $prefetchHits -RecentHits $recentHits
 
 if ($verifiedMods.Count -gt 0) {
     Write-SectionHeader -Title "VERIFIED MODS" -Count $verifiedMods.Count -DotColor Green -CountColor Green
@@ -1251,7 +1377,7 @@ if ($jvmFlags.Count -gt 0) {
     Write-Host ""
 }
 
-Write-Host "📊 SUMMARY" -ForegroundColor Cyan
+Write-Host "📊 SUMMARY" -ForegroundColor DarkRed
 Write-Rule "━" 76 Blue
 Write-Host "  Total files scanned: " -ForegroundColor Gray -NoNewline; Write-Host "$totalFiles"                   -ForegroundColor White
 Write-Host "  Verified mods:       " -ForegroundColor Gray -NoNewline; Write-Host "$($verifiedMods.Count)"        -ForegroundColor Green
@@ -1260,26 +1386,14 @@ Write-Host "  Suspicious mods:     " -ForegroundColor Gray -NoNewline; Write-Hos
 Write-Host "  Bypass/Injected:     " -ForegroundColor Gray -NoNewline; Write-Host "$($bypassMods.Count)"          -ForegroundColor Magenta
 Write-Host "  Obfuscated mods:     " -ForegroundColor Gray -NoNewline; Write-Host "$($obfuscatedMods.Count)"      -ForegroundColor Yellow
 Write-Host "  JVM issues:          " -ForegroundColor Gray -NoNewline; Write-Host "$($jvmFlags.Count)"            -ForegroundColor Yellow
+Write-Host "  History hits:        " -ForegroundColor Gray -NoNewline; Write-Host "$($prefetchHits.Count + $recentHits.Count)" -ForegroundColor Yellow
 Write-Host
 Write-Rule "━" 76 Blue
 Write-Host ""
-Write-Host "  ✨ Analysis complete! Thanks for using Meow Mod Analyzer 🐱" -ForegroundColor Cyan
+Write-Host "  ✨ Analysis complete! Thanks for using Main2Packet Mod Analyzer" -ForegroundColor DarkRed
 Write-Host ""
-Write-Host "  👤 Created by: " -ForegroundColor White -NoNewline
-Write-Host "🌟 " -ForegroundColor Cyan -NoNewline
-Write-Host "Tonynoh" -ForegroundColor Cyan
-Write-Host "  📱 My Socials: " -ForegroundColor White -NoNewline
-Write-Host "💬 " -ForegroundColor Blue -NoNewline
-Write-Host "Discord  : " -ForegroundColor Blue -NoNewline
-Write-Host "tonyboy90_" -ForegroundColor Blue
-Write-Host "                 " -NoNewline
-Write-Host "🔗 " -ForegroundColor DarkGray -NoNewline
-Write-Host "GitHub   : " -ForegroundColor DarkGray -NoNewline
-Write-Host "https://github.com/MeowTonynoh" -ForegroundColor DarkGray
-Write-Host "                 " -NoNewline
-Write-Host "🎥 " -ForegroundColor Red -NoNewline
-Write-Host "YouTube  : " -ForegroundColor Red -NoNewline
-Write-Host "tonynoh-07" -ForegroundColor Red
+Write-Host "  👤 Built by: " -ForegroundColor White -NoNewline
+Write-Host "Main2Packet" -ForegroundColor DarkRed
 Write-Host ""
 Write-Rule "━" 76 Blue
 Write-Host ""
