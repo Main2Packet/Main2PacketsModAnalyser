@@ -1,1 +1,274 @@
+$Host.UI.RawUI.ForegroundColor = "DarkCyan"
+
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+$OutputEncoding           = [System.Text.Encoding]::UTF8
+chcp 65001 | Out-Null
+Clear-Host
+
+$Banner = @"
+
+██████╗  █████╗ ███╗   ███╗    ██████╗  █████╗ ██████╗ ███████╗███████╗██████╗ 
+██╔══██╗██╔══██╗████╗ ████║    ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
+██████╔╝███████║██╔████╔██║    ██████╔╝███████║██████╔╝███████╗█████╗  ██████╔╝
+██╔══██╗██╔══██║██║╚██╔╝██║    ██╔═══╝ ██╔══██║██╔══██╗╚════██║██╔══╝  ██╔══██╗
+██████╔╝██║  ██║██║ ╚═╝ ██║    ██║     ██║  ██║██║  ██║███████║███████╗██║  ██║
+╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
+                                                                                 
+    Built by Main2Packet - EXE Executable Finder and Analyzer
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"@
+
+Write-Host $Banner -ForegroundColor DarkCyan
+Write-Host "📋 BAM Parser v1.0 - Executive Scanning Tool`n" -ForegroundColor Cyan
+
+# ==============================================================================
+# FUNCTION: Get-BamEntries
+# ==============================================================================
+function Get-BamEntries {
+    <#
+    .SYNOPSIS
+    Scans the Windows BAM (Background Activity Moderator) registry for executable files
+    .DESCRIPTION
+    Extracts execution history from HKLM\SYSTEM\CurrentControlSet\Services\bam\State
+    #>
+    Write-Host "🔍 Scanning Windows BAM Registry..." -ForegroundColor Cyan
+    Write-Host "   Path: HKLM:\SYSTEM\CurrentControlSet\Services\bam\State`n" -ForegroundColor Gray
+    
+    $bamPath = "HKLM:\SYSTEM\CurrentControlSet\Services\bam\State"
+    $bamEntries = @()
+    
+    try {
+        if (Test-Path $bamPath) {
+            $keys = Get-Item -Path $bamPath -ErrorAction Stop
+            
+            foreach ($prop in $keys.Property) {
+                if ($prop -like "*.exe" -or $prop -like "*" -and $prop -match "\.exe$") {
+                    $bamEntries += @{
+                        Executable = $prop
+                        Source     = "BAM Registry"
+                        Found      = $false
+                        Path       = ""
+                    }
+                }
+            }
+            
+            Write-Host "✓ Found $($bamEntries.Count) executables in BAM registry" -ForegroundColor Green
+        } else {
+            Write-Host "⚠ BAM Registry path not found (may require admin privileges)" -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "❌ Error accessing BAM registry: $_" -ForegroundColor Red
+    }
+    
+    return $bamEntries
+}
+
+# ==============================================================================
+# FUNCTION: Search-AllExecutables
+# ==============================================================================
+function Search-AllExecutables {
+    <#
+    .SYNOPSIS
+    Performs comprehensive system-wide EXE file search
+    .DESCRIPTION
+    Searches common directories for .exe files including:
+    - System directories (System32, SysWOW64)
+    - Program Files
+    - AppData directories
+    - Temp folders
+    #>
+    Write-Host "`n🔎 Starting System-Wide EXE Search..." -ForegroundColor Cyan
+    
+    $searchPaths = @(
+        "C:\Windows\System32",
+        "C:\Windows\SysWOW64",
+        "C:\Program Files",
+        "C:\Program Files (x86)",
+        "$env:APPDATA",
+        "$env:LOCALAPPDATA",
+        "$env:TEMP",
+        "$env:USERPROFILE\Downloads",
+        "$env:USERPROFILE\Desktop"
+    )
+    
+    $exeFiles = @()
+    $searchedCount = 0
+    
+    foreach ($path in $searchPaths) {
+        if (Test-Path $path -ErrorAction SilentlyContinue) {
+            Write-Host "   ├─ Scanning: $path" -ForegroundColor Gray
+            
+            try {
+                $files = Get-ChildItem -Path $path -Filter "*.exe" -Recurse -ErrorAction SilentlyContinue | 
+                         Select-Object -Property FullPath, Name, Length, CreationTime, LastWriteTime -First 500
+                
+                foreach ($file in $files) {
+                    $exeFiles += @{
+                        Name         = $file.Name
+                        FullPath     = $file.FullPath
+                        Size         = $file.Length
+                        Created      = $file.CreationTime
+                        Modified     = $file.LastWriteTime
+                        Source       = "System Search"
+                        FileType     = "Executable"
+                    }
+                }
+                
+                $searchedCount += ($files | Measure-Object).Count
+            } catch {
+                Write-Host "   ├─ ⚠ Access denied: $path" -ForegroundColor Yellow
+            }
+        }
+    }
+    
+    Write-Host "   └─ ✓ Completed search - Found $searchedCount EXE files`n" -ForegroundColor Green
+    
+    return $exeFiles
+}
+
+# ==============================================================================
+# FUNCTION: Get-FileProperties
+# ==============================================================================
+function Get-FileProperties {
+    <#
+    .SYNOPSIS
+    Extracts detailed file properties including hash and version info
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$FilePath
+    )
+    
+    $properties = @{
+        Path       = $FilePath
+        Size       = 0
+        SHA256     = ""
+        Version    = ""
+        Company    = ""
+        ProductName = ""
+    }
+    
+    try {
+        if (Test-Path $FilePath) {
+            $fileInfo = Get-Item -Path $FilePath -ErrorAction Stop
+            $properties.Size = $fileInfo.Length
+            
+            # Calculate SHA256
+            try {
+                $hash = Get-FileHash -Path $FilePath -Algorithm SHA256 -ErrorAction Stop
+                $properties.SHA256 = $hash.Hash
+            } catch { }
+            
+            # Get version info
+            try {
+                $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($FilePath)
+                $properties.Version = $versionInfo.FileVersion
+                $properties.Company = $versionInfo.CompanyName
+                $properties.ProductName = $versionInfo.ProductName
+            } catch { }
+        }
+    } catch { }
+    
+    return $properties
+}
+
+# ==============================================================================
+# FUNCTION: Export-Results
+# ==============================================================================
+function Export-Results {
+    <#
+    .SYNOPSIS
+    Exports scan results to CSV file
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        [array]$Results
+    )
+    
+    $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+    $outputFile = "$env:USERPROFILE\Desktop\BAM_Parser_Results_$timestamp.csv"
+    
+    try {
+        $Results | Export-Csv -Path $outputFile -NoTypeInformation -Encoding UTF8
+        Write-Host "✓ Results exported to:" -ForegroundColor Green
+        Write-Host "  $outputFile`n" -ForegroundColor Cyan
+        return $outputFile
+    } catch {
+        Write-Host "❌ Error exporting results: $_" -ForegroundColor Red
+        return $null
+    }
+}
+
+# ==============================================================================
+# FUNCTION: Invoke-BamParser
+# ==============================================================================
+function Invoke-BamParser {
+    <#
+    .SYNOPSIS
+    Main BAM Parser execution
+    #>
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor DarkCyan
+    
+    # Get BAM Registry Entries
+    $bamEntries = Get-BamEntries
+    
+    # Search System for EXEs
+    $systemExes = Search-AllExecutables
+    
+    # Compile Results
+    $allResults = @()
+    
+    foreach ($exe in $systemExes) {
+        $allResults += [PSCustomObject]@{
+            'Executable Name' = $exe.Name
+            'Full Path'       = $exe.FullPath
+            'File Size (KB)'  = [math]::Round($exe.Size / 1024, 2)
+            'Created'         = $exe.Created
+            'Modified'        = $exe.Modified
+            'Source'          = $exe.Source
+            'Type'            = $exe.FileType
+        }
+    }
+    
+    # Display Summary
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor DarkCyan
+    Write-Host "📊 Scan Summary:" -ForegroundColor Cyan
+    Write-Host "   Total EXE files found: $($allResults.Count)" -ForegroundColor White
+    Write-Host "   BAM Registry entries: $($bamEntries.Count)" -ForegroundColor White
+    Write-Host "   System search results: $($systemExes.Count)`n" -ForegroundColor White
+    
+    # Export Results
+    if ($allResults.Count -gt 0) {
+        Export-Results -Results $allResults
+        
+        # Show sample results
+        Write-Host "📄 Sample Results (first 10):`n" -ForegroundColor Cyan
+        $allResults | Select-Object -First 10 | Format-Table -AutoSize
+    } else {
+        Write-Host "⚠ No executable files found in scan" -ForegroundColor Yellow
+    }
+    
+    Write-Host "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor DarkCyan
+    Write-Host "✓ BAM Parser scan completed successfully!" -ForegroundColor Green
+    Write-Host "Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
+
+# ==============================================================================
+# ENTRY POINT
+# ==============================================================================
+
+# Check for Administrator Privileges
+$isAdmin = [bool]([System.Security.Principal.WindowsIdentity]::GetCurrent().Groups -match "S-1-5-32-544")
+if (-not $isAdmin) {
+    Write-Host "⚠ Warning: Not running as Administrator" -ForegroundColor Yellow
+    Write-Host "Some scan results may be limited due to permission restrictions.`n" -ForegroundColor Gray
+}
+
+# Run the main parser
+Invoke-BamParser
+
 
