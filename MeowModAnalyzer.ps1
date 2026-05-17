@@ -1174,17 +1174,13 @@ function Write-HistoryScanReport {
         Write-Host "  Prefetch matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $PrefetchHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
-            Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline
             if ($null -ne $hit.LastRun -and $hit.LastRun -ne '') {
+                Write-Host "       Last run:   " -ForegroundColor Gray -NoNewline
                 Write-Host "$($hit.LastRun)" -ForegroundColor DarkGray
-            } else {
-                Write-Host "unknown" -ForegroundColor DarkGray
             }
-            Write-Host "       Executable: " -ForegroundColor Gray -NoNewline
             if ($null -ne $hit.PrefetchPath -and $hit.PrefetchPath -ne '') {
+                Write-Host "       Executable: " -ForegroundColor Gray -NoNewline
                 Write-Host "$($hit.PrefetchPath)" -ForegroundColor DarkGray
-            } else {
-                Write-Host "unknown" -ForegroundColor DarkGray
             }
         }
         Write-Host ""
@@ -1193,8 +1189,14 @@ function Write-HistoryScanReport {
         Write-Host "  Recent shortcut matches:" -ForegroundColor DarkMagenta
         foreach ($hit in $RecentHits) {
             Write-Host "    • $($hit.FileName)" -ForegroundColor White
-            Write-Host "       Target:      " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.TargetPath -or 'unknown')" -ForegroundColor DarkGray
-            Write-Host "       Last used:   " -ForegroundColor Gray -NoNewline; Write-Host "$($hit.LastUsed -or 'unknown')" -ForegroundColor DarkGray
+            if ($null -ne $hit.TargetPath -and $hit.TargetPath -ne '') {
+                Write-Host "       Target:      " -ForegroundColor Gray -NoNewline
+                Write-Host "$($hit.TargetPath)" -ForegroundColor DarkGray
+            }
+            if ($null -ne $hit.LastUsed -and $hit.LastUsed -ne '') {
+                Write-Host "       Last used:   " -ForegroundColor Gray -NoNewline
+                Write-Host "$($hit.LastUsed)" -ForegroundColor DarkGray
+            }
         }
         Write-Host ""
     }
@@ -1231,9 +1233,7 @@ function Write-SuspiciousCard {
     Write-Host "  │ " -ForegroundColor DarkMagenta -NoNewline
     Write-Host " FLAGGED " -ForegroundColor White -BackgroundColor DarkMagenta -NoNewline
     Write-Host "  " -NoNewline
-    Write-Host $Mod.FileName -ForegroundColor Yellow -NoNewline
-    if ($Mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline }
-    Write-Host ""
+    Write-Host $Mod.FileName -ForegroundColor Yellow
     Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkMagenta
 
     if ($Mod.Patterns.Count -gt 0) {
@@ -1279,9 +1279,7 @@ function Write-InjectionCard {
     Write-Host "  │ " -ForegroundColor DarkMagenta -NoNewline
     Write-Host " INJECTION " -ForegroundColor White -BackgroundColor DarkMagenta -NoNewline
     Write-Host "  " -NoNewline
-    Write-Host $Mod.FileName -ForegroundColor Yellow -NoNewline
-    if ($Mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline }
-    Write-Host ""
+    Write-Host $Mod.FileName -ForegroundColor Yellow
     Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkMagenta
 
     foreach ($flag in $Mod.Flags) {
@@ -1316,9 +1314,7 @@ function Write-ObfuscationCard {
     Write-Host "  │ " -ForegroundColor DarkYellow -NoNewline
     Write-Host " OBFUSCATED " -ForegroundColor Black -BackgroundColor DarkYellow -NoNewline
     Write-Host "  " -NoNewline
-    Write-Host $Mod.FileName -ForegroundColor Yellow -NoNewline
-    if ($Mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta -NoNewline }
-    Write-Host ""
+    Write-Host $Mod.FileName -ForegroundColor Yellow
     Write-Host ("  │ " + ("─" * 66)) -ForegroundColor DarkYellow
 
     foreach ($flag in $Mod.Flags) {
@@ -1506,7 +1502,6 @@ if ($verifiedMods.Count -gt 0) {
         Write-Host "$($mod.ModName)" -ForegroundColor White -NoNewline
         Write-Host " → " -ForegroundColor Gray -NoNewline
         Write-Host "$($mod.FileName)" -ForegroundColor DarkGray
-        if ($mod.Hidden) { Write-Host " [MOD IS HIDDEN]" -ForegroundColor Magenta }
     }
     Write-Host ""
 }
@@ -1521,7 +1516,7 @@ if ($unknownMods.Count -gt 0) {
         $sourceText = if ($mod.DownloadSource) { "Source: $($mod.DownloadSource)" } else { "Source: ?" }
         $bottomLine = "  ╚═ " + $sourceText + " " + ("═" * (67 - $sourceText.Length)) + "╝"
         Write-Host $topLine    -ForegroundColor Yellow
-        if ($mod.Hidden) { Write-Host "    [MOD IS HIDDEN]" -ForegroundColor Magenta }
+        if ($mod.Hidden) { Write-Host "    MOD IS HIDDEN" -ForegroundColor Magenta }
         Write-Host $bottomLine -ForegroundColor Yellow
         Write-Host ""
     }
