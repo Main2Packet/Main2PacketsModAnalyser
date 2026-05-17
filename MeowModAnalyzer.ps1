@@ -14,12 +14,13 @@ if ($currentFont -notmatch "NSimSun|Gothic|Noto") {
 
 $Banner = @"
 
-  ███╗   ███╗███████╗ ██████╗ ██╗    ██╗  ███╗   ███╗ ██████╗ ██████╗
-  ████╗ ████║██╔════╝██╔═══██╗██║    ██║  ████╗ ████║██╔═══██╗██╔══██╗
-  ██╔████╔██║█████╗  ██║   ██║██║ █╗ ██║  ██╔████╔██║██║   ██║██║  ██║
-  ██║╚██╔╝██║██╔══╝  ██║   ██║██║███╗██║  ██║╚██╔╝██║██║   ██║██║  ██║
-  ██║ ╚═╝ ██║███████╗╚██████╔╝╚███╔███╔╝  ██║ ╚═╝ ██║╚██████╔╝██████╔╝
-  ╚═╝     ╚═╝╚══════╝ ╚═════╝  ╚══╝╚══╝   ╚═╝     ╚═╝ ╚═════╝ ╚═════╝
+
+███╗   ███╗ █████╗ ██╗███╗   ██╗     ███╗   ███╗ ██████╗  ██████╗
+████╗ ████║██╔══██╗██║████╗  ██║     ████╗ ████║██╔═══██╗██╔═══██╗
+██╔████╔██║███████║██║██╔██╗ ██║     ██╔████╔██║██║   ██║██║   ██║
+██║╚██╔╝██║██╔══██║██║██║╚██╗██║     ██║╚██╔╝██║██║   ██║██║   ██║
+██║ ╚═╝ ██║██║  ██║██║██║ ╚████║     ██║ ╚═╝ ██║╚██████╔╝╚██████╔╝
+╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝     ╚═╝     ╚═╝ ╚═════╝  ╚═════╝
 
    █████╗ ███╗   ██╗ █████╗ ██╗   ██╗   ██╗███████╗███████╗██████╗
   ██╔══██╗████╗  ██║██╔══██╗██║   ╚██╗ ██╔╝╚══███╔╝██╔════╝██╔══██╗
@@ -28,21 +29,24 @@ $Banner = @"
   ██║  ██║██║ ╚████║██║  ██║███████╗ ██║   ███████╗███████╗██║  ██║
   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═╝   ╚══════╝╚══════╝╚═╝  ╚═╝
 
-                         \    /\
-                          )  ( ')
-                         (  /  )
-                          \(__)|
+
+                          /^ ^\
+                         / 0 0 \
+                         V\ Y /V
+                          / - \
+                          |    \
+                          || (__V
 
 "@
 
-Write-Host $Banner -ForegroundColor Cyan
+Write-Host $Banner -ForegroundColor DarkRed
 Write-Host ""
 Write-Host "                Made with " -ForegroundColor Gray -NoNewline
 Write-Host "♥ " -ForegroundColor Red -NoNewline
 Write-Host "by " -ForegroundColor Gray -NoNewline
-Write-Host "MeowTonynoh" -ForegroundColor Cyan
+Write-Host "MeowTonynoh" -ForegroundColor DarkRed
 Write-Host ""
-Write-Host ("━" * 76) -ForegroundColor DarkCyan
+Write-Host ("━" * 76) -ForegroundColor DarkRed
 Write-Host
 
 Write-Host "Enter path to the mods folder: " -NoNewline
@@ -80,7 +84,7 @@ if ($mcProcess) {
     try {
         $startTime = $mcProcess.StartTime
         $uptime = (Get-Date) - $startTime
-        Write-Host "🕒 { Minecraft Uptime }" -ForegroundColor DarkCyan
+        Write-Host "🕒 { Minecraft Uptime }" -ForegroundColor DarkRed
         Write-Host "   $($mcProcess.Name) PID $($mcProcess.Id) started at $startTime" -ForegroundColor Gray
         Write-Host "   Running for: $($uptime.Hours)h $($uptime.Minutes)m $($uptime.Seconds)s" -ForegroundColor Gray
         Write-Host ""
