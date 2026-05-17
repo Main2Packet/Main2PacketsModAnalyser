@@ -1182,7 +1182,7 @@ function Invoke-PrefetchScan {
 function Invoke-RecentLnkScan {
     param(
         [string]$BasePath = "$env:APPDATA\Microsoft\Windows\Recent",
-        [string[]]$Keywords = @("198m","198macro","prestige","prestigeclient","prestigeinjector","doomsday")
+        [string[]]$Keywords = @("198m","198macro","prestige","prestigeclient","prestigeinjector","doomsday","novoware")
     )
     $hits = [System.Collections.Generic.List[psobject]]::new()
     if (-not (Test-Path $BasePath)) { return $hits }
