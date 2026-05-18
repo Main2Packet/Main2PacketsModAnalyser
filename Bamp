@@ -1,4 +1,3 @@
-```powershell id="s6l2hv"
 $ErrorActionPreference = "SilentlyContinue"
 
 function Get-Signature {
@@ -37,22 +36,27 @@ function Get-Signature {
 
 Clear-Host
 
-Write-Host "";
-Write-Host "";
-Write-Host -ForegroundColor Red "   ██████╗ ███████╗██████╗     ██╗      ██████╗ ████████╗██╗   ██╗███████╗    ██████╗  █████╗ ███╗   ███╗";
-Write-Host -ForegroundColor Red "   ██╔══██╗██╔════╝██╔══██╗    ██║     ██╔═══██╗╚══██╔══╝██║   ██║██╔════╝    ██╔══██╗██╔══██╗████╗ ████║";
-Write-Host -ForegroundColor Red "   ██████╔╝█████╗  ██║  ██║    ██║     ██║   ██║   ██║   ██║   ██║███████╗    ██████╔╝███████║██╔████╔██║";
-Write-Host -ForegroundColor Red "   ██╔══██╗██╔══╝  ██║  ██║    ██║     ██║   ██║   ██║   ██║   ██║╚════██║    ██╔══██╗██╔══██║██║╚██╔╝██║";
-Write-Host -ForegroundColor Red "   ██║  ██║███████╗██████╔╝    ███████╗╚██████╔╝   ██║   ╚██████╔╝███████║    ██████╔╝██║  ██║██║ ╚═╝ ██║";
-Write-Host -ForegroundColor Red "   ╚═╝  ╚═╝╚══════╝╚═════╝     ╚══════╝ ╚═════╝    ╚═╝    ╚═════╝ ╚══════╝    ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝";
-Write-Host "";
-Write-Host -ForegroundColor Blue "   Made By PureIntent (Shitty ScreenSharer) For Red Lotus ScreenSharing and DFIR - " -NoNewLine
-Write-Host -ForegroundColor Red "discord.gg/redlotus";
-Write-Host "";
+Write-Host ""
+Write-Host ""
+Write-Host -ForegroundColor Magenta "███╗   ███╗ █████╗ ██╗███╗   ██╗    ██████╗  █████╗ ███╗   ███╗";
+Write-Host -ForegroundColor Magenta "████╗ ████║██╔══██╗██║████╗  ██║    ██╔══██╗██╔══██╗████╗ ████║";
+Write-Host -ForegroundColor RMagenta"██╔████╔██║███████║██║██╔██╗ ██║    ██████╔╝███████║██╔████╔██║";
+Write-Host -ForegroundColor Magenta "██║╚██╔╝██║██╔══██║██║██║╚██╗██║    ██╔══██╗██╔══██║██║╚██╔╝██║";
+Write-Host -ForegroundColor Magenta "██║ ╚═╝ ██║██║  ██║██║██║ ╚████║    ██████╔╝██║  ██║██║ ╚═╝ ██║";
+Write-Host -ForegroundColor Magenta "╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝    ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝";
 
-function Test-Admin {;$currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent());$currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator);}
+Write-Host ""
+Write-Host -ForegroundColor Cyan "   Made By PureIntent (Shitty ScreenSharer) For Red Lotus ScreenSharing and DFIR - " -NoNewLine
+Write-Host -ForegroundColor Magenta "discord.gg/redlotus"
+Write-Host ""
+
+function Test-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+    $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+}
+
 if (!(Test-Admin)) {
-    Write-Warning "Please Run This Script as Admin."
+    Write-Host "Please Run This Script as Admin." -ForegroundColor Magenta
     Start-Sleep 10
     Exit
 }
@@ -61,7 +65,7 @@ $sw = [Diagnostics.Stopwatch]::StartNew()
 
 if (!(Get-PSDrive -Name HKLM -PSProvider Registry)){
     Try{New-PSDrive -Name HKLM -PSProvider Registry -Root HKEY_LOCAL_MACHINE}
-    Catch{Write-Warning "Error Mounting HKEY_Local_Machine"}
+    Catch{Write-Host "Error Mounting HKEY_Local_Machine" -ForegroundColor DarkMagenta}
 }
 
 $bv = ("bam", "bam\State")
@@ -73,13 +77,13 @@ Try{
     }
 }
 Catch{
-    Write-Warning "Error Parsing BAM Key. Likely unsupported Windows Version"
+    Write-Host "Error Parsing BAM Key. Likely unsupported Windows Version" -ForegroundColor Magenta
     Exit
 }
 
 $rpath = @(
-"HKLM:\SYSTEM\CurrentControlSet\Services\bam\",
-"HKLM:\SYSTEM\CurrentControlSet\Services\bam\state\"
+    "HKLM:\SYSTEM\CurrentControlSet\Services\bam\",
+    "HKLM:\SYSTEM\CurrentControlSet\Services\bam\state\"
 )
 
 $UserTime = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation").TimeZoneKeyName
@@ -93,19 +97,23 @@ $Bam = Foreach ($Sid in $Users){
         $BamItems = Get-Item -Path "$($rp)UserSettings\$Sid" -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Property
 
-        Write-Host -ForegroundColor Red "Extracting " -NoNewLine
-        Write-Host -ForegroundColor Blue "$($rp)UserSettings\$SID"
+        Write-Host -ForegroundColor Magenta "Extracting " -NoNewLine
+        Write-Host -ForegroundColor DarkMagenta "$($rp)UserSettings\$SID"
+
+        $bi = 0 
 
         Try{
             $objSID = New-Object System.Security.Principal.SecurityIdentifier($Sid)
-            $User = $objSID.Translate([System.Security.Principal.NTAccount])
+            $User = $objSID.Translate([System.Security.Principal.NTAccount]) 
             $User = $User.Value
         }
-        Catch{
-            $User=""
-        }
+        Catch{$User=""}
+
+        $i=0
 
         ForEach ($Item in $BamItems){
+
+            $i++
 
             $Key = Get-ItemProperty -Path "$($rp)UserSettings\$Sid" -ErrorAction SilentlyContinue |
             Select-Object -ExpandProperty $Item
@@ -115,169 +123,51 @@ $Bam = Foreach ($Sid in $Users){
                 $Hex=[System.BitConverter]::ToString($key[7..0]) -replace "-",""
 
                 $TimeLocal = Get-Date ([DateTime]::FromFileTime([Convert]::ToInt64($Hex, 16))) -Format "yyyy-MM-dd HH:mm:ss"
-
                 $TimeUTC = Get-Date ([DateTime]::FromFileTimeUtc([Convert]::ToInt64($Hex, 16))) -Format "yyyy-MM-dd HH:mm:ss"
 
                 $Bias = -([convert]::ToInt32([Convert]::ToString($UserBias,2),2))
+                $Day = -([convert]::ToInt32([Convert]::ToString($UserDay,2),2)) 
 
-                $TImeUser = (
-                    Get-Date (
-                        [DateTime]::FromFileTimeUtc(
-                            [Convert]::ToInt64($Hex, 16)
-                        )
-                    ).addminutes($Bias) -Format "yyyy-MM-dd HH:mm:ss"
-                )
+                $Biasd = $Bias/60
+                $Dayd = $Day/60
+
+                $TImeUser = (Get-Date ([DateTime]::FromFileTimeUtc([Convert]::ToInt64($Hex, 16))).addminutes($Bias) -Format "yyyy-MM-dd HH:mm:ss") 
 
                 $d = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3)-match '\d{1}')
-                {((split-path -path $item).Remove(23)).trimstart("\Device\HarddiskVolume")}
-                else {$d = ""}
+                {((split-path -path $item).Remove(23)).trimstart("\Device\HarddiskVolume")} else {$d = ""}
 
                 $f = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3)-match '\d{1}')
-                {Split-path -leaf ($item).TrimStart()}
-                else {$item}
+                {Split-path -leaf ($item).TrimStart()} else {$item}    
 
                 $cp = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3)-match '\d{1}')
-                {($item).Remove(1,23)}
-                else {$cp = ""}
+                {($item).Remove(1,23)} else {$cp = ""}
 
                 $path = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3)-match '\d{1}')
-                {Join-Path -Path "C:" -ChildPath $cp}
-                else {$path = ""}
+                {Join-Path -Path "C:" -ChildPath $cp} else {$path = ""}            
 
                 $sig = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3)-match '\d{1}')
-                {Get-Signature -FilePath $path}
-                else {$sig = ""}
+                {Get-Signature -FilePath $path} else {$sig = ""}                
 
                 [PSCustomObject]@{
-                    'Examiner Time'             = $TimeLocal
+                    'Examiner Time' = $TimeLocal
                     'Last Execution Time (UTC)'= $TimeUTC
                     'Last Execution User Time' = $TimeUser
-                    Application                = $f
-                    Path                       = $path
-                    Signature                  = $Sig
-                    User                       = $User
-                    SID                        = $Sid
-                    Regpath                    = $rp
+                    Application = $f
+                    Path = $path
+                    Signature = $Sig
+                    User = $User
+                    SID = $Sid
+                    Regpath = $rp
                 }
             }
         }
     }
 }
 
-$Bam | Out-GridView -PassThru -Title "BAM key entries $($Bam.count)  - User TimeZone: ($UserTime) -> ActiveBias: ( $Bias)"
-
-# HTML REPORT
-
-$HtmlReport = "$env:TEMP\BAM_Report.html"
-
-$Style = @"
-<style>
-
-body{
-    background-color:#0f0f0f;
-    color:#e0e0e0;
-    font-family:Consolas;
-    margin:20px;
-}
-
-table{
-    border-collapse:collapse;
-    width:100%;
-    font-size:13px;
-}
-
-th{
-    background-color:#8B0000;
-    color:white;
-    padding:8px;
-    border:1px solid #333;
-    text-align:left;
-}
-
-td{
-    padding:6px;
-    border:1px solid #333;
-}
-
-tr:nth-child(even){
-    background-color:#1a1a1a;
-}
-
-tr:nth-child(odd){
-    background-color:#141414;
-}
-
-tr:hover{
-    background-color:#262626;
-}
-
-h1{
-    color:#ff4d4d;
-}
-
-.valid{
-    color:#4cff4c;
-    font-weight:bold;
-}
-
-.invalid{
-    color:#ff4c4c;
-    font-weight:bold;
-}
-
-</style>
-"@
-
-$HtmlData = foreach($Entry in ($Bam | Sort-Object "Last Execution Time (UTC)" -Descending)){
-
-    $SigClass = if($Entry.Signature -match "Valid"){
-        "valid"
-    }
-    else{
-        "invalid"
-    }
-
-    [PSCustomObject]@{
-        "Examiner Time"             = $Entry.'Examiner Time'
-        "Last Execution Time UTC"  = $Entry.'Last Execution Time (UTC)'
-        "Last Execution User Time" = $Entry.'Last Execution User Time'
-        "Application"              = $Entry.Application
-        "Path"                     = $Entry.Path
-        "Signature"                = "<span class='${SigClass}'>$($Entry.Signature)</span>"
-        "User"                     = $Entry.User
-        "SID"                      = $Entry.SID
-        "Registry Path"            = $Entry.Regpath
-    }
-}
-
-$Html = $HtmlData | ConvertTo-Html `
--Head $Style `
--Title "Red Lotus BAM Report" `
--PreContent @"
-
-<h1>Red Lotus BAM Report</h1>
-
-<p><b>Generated:</b> $(Get-Date)</p>
-<p><b>Total Entries:</b> $($Bam.Count)</p>
-<p><b>Timezone:</b> $UserTime</p>
-
-<hr>
-
-<h2>Execution Timeline</h2>
-
-"@
-
-$Html | Out-File $HtmlReport -Encoding UTF8
-
-Write-Host ""
-Write-Host "HTML Report Saved:" -ForegroundColor Cyan
-Write-Host $HtmlReport -ForegroundColor Yellow
-
-Start-Process $HtmlReport
+$Bam | Out-GridView -PassThru -Title "BAM key entries $($Bam.count)  - User TimeZone: ($UserTime) -> ActiveBias: ( $Bias) - DayLightTime: ($Day)"
 
 $sw.stop()
 $t = $sw.Elapsed.TotalMinutes
 
 Write-Host ""
-Write-Host "Elapsed Time $t Minutes" -ForegroundColor Yellow
-```
+Write-Host "Elapsed Time $t Minutes" -ForegroundColor Magenta
