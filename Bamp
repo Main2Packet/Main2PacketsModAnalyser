@@ -3,7 +3,7 @@ $ErrorActionPreference = "SilentlyContinue"
 function Get-Signature {
 
     [CmdletBinding()]
-     param (
+    param (
         [string[]]$FilePath
     )
 
@@ -28,21 +28,23 @@ function Get-Signature {
             $Signature = "Invalid Signature (UnknownError)"
         }
         return $Signature
-    } else {
-        $Signature = "File Was Not Found"
-        return $Signature
+    }
+    else {
+        return "File Was Not Found"
     }
 }
 
-$Banner = @"
+Clear-Host
+
+# ===================== BANNER =====================
+
+$Banner = @'
 ███╗   ███╗  █████╗  ██╗███╗   ██╗    ██████╗  █████╗ ███╗   ███╗
 ████╗ ████║ ██╔══██╗ ██║████╗  ██║    ██╔══██╗██╔══██╗████╗ ████║
 ██╔████╔██║ ███████║ ██║██╔██╗ ██║    ██████╔╝███████║██╔████╔██║
 ██║╚██╔╝██║ ██╔══██║ ██║██║╚██╗██║    ██╔══██╗██╔══██║██║╚██╔╝██║
 ██║ ╚═╝ ██║ ██║  ██║ ██║██║ ╚████║    ██████╔╝██║  ██║██║ ╚═╝ ██║
 ╚═╝     ╚═╝ ╚═╝  ╚═╝ ╚═╝╚═╝  ╚═══╝    ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝
-
-
 
    █████╗ ███╗   ██╗ █████╗ ██╗   ██╗   ██╗███████╗███████╗██████╗
   ██╔══██╗████╗  ██║██╔══██╗██║   ╚██╗ ██╔╝╚══███╔╝██╔════╝██╔══██╗
@@ -51,17 +53,21 @@ $Banner = @"
   ██║  ██║██║ ╚████║██║  ██║███████╗ ██║   ███████╗███████╗██║  ██║
   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═╝   ╚══════╝╚══════╝╚═╝  ╚═╝
 
-
                           /^ ^\
                          / 0 0 \
                          V\ Y /V
                           / - \
                           |    \
                           || (__V
-"@
+'@
+
+# ===================== OUTPUT =====================
 
 Write-Host ""
-Write-Host -ForegroundColor Cyan "   Made By PureIntent (Shitty ScreenSharer) For Red Lotus ScreenSharing and DFIR - " -NoNewLine
+Write-Host $Banner -ForegroundColor Magenta
+Write-Host ""
+
+Write-Host -ForegroundColor Cyan "   Made By PureIntent (Shitty ScreenSharer) For Red Lotus ScreenSharing and DFIR - " -NoNewline
 Write-Host -ForegroundColor Magenta "discord.gg/redlotus"
 Write-Host ""
 
