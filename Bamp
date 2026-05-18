@@ -1,274 +1,255 @@
-$Host.UI.RawUI.ForegroundColor = "DarkCyan"
+```powershell
+$ErrorActionPreference = "SilentlyContinue"
 
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-[Console]::InputEncoding  = [System.Text.Encoding]::UTF8
-$OutputEncoding           = [System.Text.Encoding]::UTF8
-chcp 65001 | Out-Null
-Clear-Host
+function Get-Signature {
 
-$Banner = @"
-
-██████╗  █████╗ ███╗   ███╗    ██████╗  █████╗ ██████╗ ███████╗███████╗██████╗ 
-██╔══██╗██╔══██╗████╗ ████║    ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
-██████╔╝███████║██╔████╔██║    ██████╔╝███████║██████╔╝███████╗█████╗  ██████╔╝
-██╔══██╗██╔══██║██║╚██╔╝██║    ██╔═══╝ ██╔══██║██╔══██╗╚════██║██╔══╝  ██╔══██╗
-██████╔╝██║  ██║██║ ╚═╝ ██║    ██║     ██║  ██║██║  ██║███████║███████╗██║  ██║
-╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
-                                                                                 
-    Built by Main2Packet - EXE Executable Finder and Analyzer
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-"@
-
-Write-Host $Banner -ForegroundColor DarkCyan
-Write-Host "📋 BAM Parser v1.0 - Executive Scanning Tool`n" -ForegroundColor Cyan
-
-# ==============================================================================
-# FUNCTION: Get-BamEntries
-# ==============================================================================
-function Get-BamEntries {
-    <#
-    .SYNOPSIS
-    Scans the Windows BAM (Background Activity Moderator) registry for executable files
-    .DESCRIPTION
-    Extracts execution history from HKLM\SYSTEM\CurrentControlSet\Services\bam\State
-    #>
-    Write-Host "🔍 Scanning Windows BAM Registry..." -ForegroundColor Cyan
-    Write-Host "   Path: HKLM:\SYSTEM\CurrentControlSet\Services\bam\State`n" -ForegroundColor Gray
-    
-    $bamPath = "HKLM:\SYSTEM\CurrentControlSet\Services\bam\State"
-    $bamEntries = @()
-    
-    try {
-        if (Test-Path $bamPath) {
-            $keys = Get-Item -Path $bamPath -ErrorAction Stop
-            
-            foreach ($prop in $keys.Property) {
-                if ($prop -like "*.exe" -or $prop -like "*" -and $prop -match "\.exe$") {
-                    $bamEntries += @{
-                        Executable = $prop
-                        Source     = "BAM Registry"
-                        Found      = $false
-                        Path       = ""
-                    }
-                }
-            }
-            
-            Write-Host "✓ Found $($bamEntries.Count) executables in BAM registry" -ForegroundColor Green
-        } else {
-            Write-Host "⚠ BAM Registry path not found (may require admin privileges)" -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "❌ Error accessing BAM registry: $_" -ForegroundColor Red
-    }
-    
-    return $bamEntries
-}
-
-# ==============================================================================
-# FUNCTION: Search-AllExecutables
-# ==============================================================================
-function Search-AllExecutables {
-    <#
-    .SYNOPSIS
-    Performs comprehensive system-wide EXE file search
-    .DESCRIPTION
-    Searches common directories for .exe files including:
-    - System directories (System32, SysWOW64)
-    - Program Files
-    - AppData directories
-    - Temp folders
-    #>
-    Write-Host "`n🔎 Starting System-Wide EXE Search..." -ForegroundColor Cyan
-    
-    $searchPaths = @(
-        "C:\Windows\System32",
-        "C:\Windows\SysWOW64",
-        "C:\Program Files",
-        "C:\Program Files (x86)",
-        "$env:APPDATA",
-        "$env:LOCALAPPDATA",
-        "$env:TEMP",
-        "$env:USERPROFILE\Downloads",
-        "$env:USERPROFILE\Desktop"
-    )
-    
-    $exeFiles = @()
-    $searchedCount = 0
-    
-    foreach ($path in $searchPaths) {
-        if (Test-Path $path -ErrorAction SilentlyContinue) {
-            Write-Host "   ├─ Scanning: $path" -ForegroundColor Gray
-            
-            try {
-                $files = Get-ChildItem -Path $path -Filter "*.exe" -Recurse -ErrorAction SilentlyContinue | 
-                         Select-Object -Property FullPath, Name, Length, CreationTime, LastWriteTime -First 500
-                
-                foreach ($file in $files) {
-                    $exeFiles += @{
-                        Name         = $file.Name
-                        FullPath     = $file.FullPath
-                        Size         = $file.Length
-                        Created      = $file.CreationTime
-                        Modified     = $file.LastWriteTime
-                        Source       = "System Search"
-                        FileType     = "Executable"
-                    }
-                }
-                
-                $searchedCount += ($files | Measure-Object).Count
-            } catch {
-                Write-Host "   ├─ ⚠ Access denied: $path" -ForegroundColor Yellow
-            }
-        }
-    }
-    
-    Write-Host "   └─ ✓ Completed search - Found $searchedCount EXE files`n" -ForegroundColor Green
-    
-    return $exeFiles
-}
-
-# ==============================================================================
-# FUNCTION: Get-FileProperties
-# ==============================================================================
-function Get-FileProperties {
-    <#
-    .SYNOPSIS
-    Extracts detailed file properties including hash and version info
-    #>
-    param(
-        [Parameter(Mandatory=$true)]
+    [CmdletBinding()]
+    param (
         [string]$FilePath
     )
-    
-    $properties = @{
-        Path       = $FilePath
-        Size       = 0
-        SHA256     = ""
-        Version    = ""
-        Company    = ""
-        ProductName = ""
-    }
-    
-    try {
-        if (Test-Path $FilePath) {
-            $fileInfo = Get-Item -Path $FilePath -ErrorAction Stop
-            $properties.Size = $fileInfo.Length
-            
-            # Calculate SHA256
-            try {
-                $hash = Get-FileHash -Path $FilePath -Algorithm SHA256 -ErrorAction Stop
-                $properties.SHA256 = $hash.Hash
-            } catch { }
-            
-            # Get version info
-            try {
-                $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($FilePath)
-                $properties.Version = $versionInfo.FileVersion
-                $properties.Company = $versionInfo.CompanyName
-                $properties.ProductName = $versionInfo.ProductName
-            } catch { }
-        }
-    } catch { }
-    
-    return $properties
-}
 
-# ==============================================================================
-# FUNCTION: Export-Results
-# ==============================================================================
-function Export-Results {
-    <#
-    .SYNOPSIS
-    Exports scan results to CSV file
-    #>
-    param(
-        [Parameter(Mandatory=$true)]
-        [array]$Results
-    )
-    
-    $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
-    $outputFile = "$env:USERPROFILE\Desktop\BAM_Parser_Results_$timestamp.csv"
-    
-    try {
-        $Results | Export-Csv -Path $outputFile -NoTypeInformation -Encoding UTF8
-        Write-Host "✓ Results exported to:" -ForegroundColor Green
-        Write-Host "  $outputFile`n" -ForegroundColor Cyan
-        return $outputFile
-    } catch {
-        Write-Host "❌ Error exporting results: $_" -ForegroundColor Red
-        return $null
+    if (!(Test-Path -PathType Leaf -Path $FilePath)) {
+        return "File Was Not Found"
     }
-}
 
-# ==============================================================================
-# FUNCTION: Invoke-BamParser
-# ==============================================================================
-function Invoke-BamParser {
-    <#
-    .SYNOPSIS
-    Main BAM Parser execution
-    #>
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor DarkCyan
-    
-    # Get BAM Registry Entries
-    $bamEntries = Get-BamEntries
-    
-    # Search System for EXEs
-    $systemExes = Search-AllExecutables
-    
-    # Compile Results
-    $allResults = @()
-    
-    foreach ($exe in $systemExes) {
-        $allResults += [PSCustomObject]@{
-            'Executable Name' = $exe.Name
-            'Full Path'       = $exe.FullPath
-            'File Size (KB)'  = [math]::Round($exe.Size / 1024, 2)
-            'Created'         = $exe.Created
-            'Modified'        = $exe.Modified
-            'Source'          = $exe.Source
-            'Type'            = $exe.FileType
+    try {
+        $Authenticode = (Get-AuthenticodeSignature -FilePath $FilePath).Status
+
+        switch ($Authenticode) {
+            "Valid"        { return "Valid Signature" }
+            "NotSigned"    { return "Invalid Signature (NotSigned)" }
+            "HashMismatch" { return "Invalid Signature (HashMismatch)" }
+            "NotTrusted"   { return "Invalid Signature (NotTrusted)" }
+            default        { return "Invalid Signature ($Authenticode)" }
         }
     }
-    
-    # Display Summary
-    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor DarkCyan
-    Write-Host "📊 Scan Summary:" -ForegroundColor Cyan
-    Write-Host "   Total EXE files found: $($allResults.Count)" -ForegroundColor White
-    Write-Host "   BAM Registry entries: $($bamEntries.Count)" -ForegroundColor White
-    Write-Host "   System search results: $($systemExes.Count)`n" -ForegroundColor White
-    
-    # Export Results
-    if ($allResults.Count -gt 0) {
-        Export-Results -Results $allResults
-        
-        # Show sample results
-        Write-Host "📄 Sample Results (first 10):`n" -ForegroundColor Cyan
-        $allResults | Select-Object -First 10 | Format-Table -AutoSize
-    } else {
-        Write-Host "⚠ No executable files found in scan" -ForegroundColor Yellow
+    catch {
+        return "Invalid Signature (UnknownError)"
     }
-    
-    Write-Host "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor DarkCyan
-    Write-Host "✓ BAM Parser scan completed successfully!" -ForegroundColor Green
-    Write-Host "Press any key to exit..." -ForegroundColor Gray
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 }
 
-# ==============================================================================
-# ENTRY POINT
-# ==============================================================================
-
-# Check for Administrator Privileges
-$isAdmin = [bool]([System.Security.Principal.WindowsIdentity]::GetCurrent().Groups -match "S-1-5-32-544")
-if (-not $isAdmin) {
-    Write-Host "⚠ Warning: Not running as Administrator" -ForegroundColor Yellow
-    Write-Host "Some scan results may be limited due to permission restrictions.`n" -ForegroundColor Gray
+function Test-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+    return $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 }
 
-# Run the main parser
-Invoke-BamParser
+Clear-Host
 
+Write-Host ""
+Write-Host ""
+
+Write-Host -ForegroundColor Red "   ██████╗ ███████╗██████╗     ██╗      ██████╗ ████████╗██╗   ██╗███████╗    ██████╗  █████╗ ███╗   ███╗"
+Write-Host -ForegroundColor Red "   ██╔══██╗██╔════╝██╔══██╗    ██║     ██╔═══██╗╚══██╔══╝██║   ██║██╔════╝    ██╔══██╗██╔══██╗████╗ ████║"
+Write-Host -ForegroundColor Red "   ██████╔╝█████╗  ██║  ██║    ██║     ██║   ██║   ██║   ██║   ██║███████╗    ██████╔╝███████║██╔████╔██║"
+Write-Host -ForegroundColor Red "   ██╔══██╗██╔══╝  ██║  ██║    ██║     ██║   ██║   ██║   ██║   ██║╚════██║    ██╔══██╗██╔══██║██║╚██╔╝██║"
+Write-Host -ForegroundColor Red "   ██║  ██║███████╗██████╔╝    ███████╗╚██████╔╝   ██║   ╚██████╔╝███████║    ██████╔╝██║  ██║██║ ╚═╝ ██║"
+Write-Host -ForegroundColor Red "   ╚═╝  ╚═╝╚══════╝╚═════╝     ╚══════╝ ╚═════╝    ╚═╝    ╚═════╝ ╚══════╝    ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝"
+
+Write-Host ""
+Write-Host -ForegroundColor Blue "   Made By PureIntent (Shitty ScreenSharer) For Red Lotus ScreenSharing and DFIR - " -NoNewLine
+Write-Host -ForegroundColor Red "discord.gg/redlotus"
+Write-Host ""
+
+if (!(Test-Admin)) {
+    Write-Warning "Please Run This Script as Admin."
+    Start-Sleep 10
+    exit
+}
+
+$sw = [Diagnostics.Stopwatch]::StartNew()
+
+# Mount HKLM if missing
+if (!(Get-PSDrive -Name HKLM -PSProvider Registry -ErrorAction SilentlyContinue)) {
+    try {
+        New-PSDrive -Name HKLM -PSProvider Registry -Root HKEY_LOCAL_MACHINE | Out-Null
+    }
+    catch {
+        Write-Warning "Error Mounting HKEY_LOCAL_MACHINE"
+        exit
+    }
+}
+
+$bv = @("bam", "bam\State")
+
+try {
+    $Users = foreach ($ii in $bv) {
+        Get-ChildItem -Path "HKLM:\SYSTEM\CurrentControlSet\Services\$ii\UserSettings\" |
+        Select-Object -ExpandProperty PSChildName
+    }
+}
+catch {
+    Write-Warning "Error Parsing BAM Key. Likely unsupported Windows Version"
+    exit
+}
+
+$rpath = @(
+    "HKLM:\SYSTEM\CurrentControlSet\Services\bam\",
+    "HKLM:\SYSTEM\CurrentControlSet\Services\bam\state\"
+)
+
+$TZInfo = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation"
+
+$UserTime = $TZInfo.TimeZoneKeyName
+$UserBias = -$TZInfo.ActiveTimeBias
+
+$Bam = foreach ($Sid in $Users | Select-Object -Unique) {
+
+    foreach ($rp in $rpath) {
+
+        $FullPath = "$($rp)UserSettings\$Sid"
+
+        Write-Host -ForegroundColor Red "Extracting " -NoNewLine
+        Write-Host -ForegroundColor Blue $FullPath
+
+        try {
+            $RegObj = Get-ItemProperty -Path $FullPath -ErrorAction SilentlyContinue
+            $BamItems = $RegObj.PSObject.Properties.Name
+        }
+        catch {
+            continue
+        }
+
+        try {
+            $objSID = New-Object System.Security.Principal.SecurityIdentifier($Sid)
+            $User = $objSID.Translate([System.Security.Principal.NTAccount]).Value
+        }
+        catch {
+            $User = ""
+        }
+
+        foreach ($Item in $BamItems) {
+
+            try {
+                $Key = $RegObj.$Item
+
+                if ($Key.Length -ne 24) {
+                    continue
+                }
+
+                $Hex = [System.BitConverter]::ToString($Key[7..0]) -replace "-", ""
+                $FileTime = [Convert]::ToInt64($Hex, 16)
+
+                $TimeUTC = [DateTime]::FromFileTimeUtc($FileTime)
+                $TimeLocal = [DateTime]::FromFileTime($FileTime)
+                $TimeUser = $TimeUTC.AddMinutes($UserBias)
+
+                $path = ""
+                $f = $Item
+
+                if ($Item -match '^\\Device\\HarddiskVolume\d+(.*)$') {
+
+                    $cp = $Matches[1]
+                    $path = "C:$cp"
+                    $f = Split-Path -Leaf $path
+                }
+
+                $sig = ""
+
+                if ($path) {
+                    $sig = Get-Signature -FilePath $path
+                }
+
+                [PSCustomObject]@{
+                    'Examiner Time'             = $TimeLocal.ToString("yyyy-MM-dd HH:mm:ss")
+                    'Last Execution Time (UTC)' = $TimeUTC.ToString("yyyy-MM-dd HH:mm:ss")
+                    'Last Execution User Time'  = $TimeUser.ToString("yyyy-MM-dd HH:mm:ss")
+                    Application                 = $f
+                    Path                        = $path
+                    Signature                   = $sig
+                    User                        = $User
+                    SID                         = $Sid
+                    RegPath                     = $rp
+                }
+
+            }
+            catch {
+                continue
+            }
+        }
+    }
+}
+
+# Remove duplicates
+$Bam = $Bam | Sort-Object Path, "Last Execution Time (UTC)" -Unique
+
+# GridView
+$Bam | Out-GridView -Title "BAM Entries: $($Bam.Count)"
+
+# CSV Export
+$CsvReport = "$env:TEMP\BAM_Report.csv"
+
+$Bam |
+Export-Csv $CsvReport -NoTypeInformation -Encoding UTF8
+
+# HTML Report
+
+$HtmlReport = "$env:TEMP\BAM_Report.html"
+
+$Style = @"
+<style>
+
+body{
+    background-color:#0f0f0f;
+    color:#e0e0e0;
+    font-family:Consolas;
+}
+
+table{
+    border-collapse:collapse;
+    width:100%;
+}
+
+th{
+    background-color:#8B0000;
+    color:white;
+    padding:8px;
+    border:1px solid #333;
+}
+
+td{
+    padding:6px;
+    border:1px solid #333;
+}
+
+tr:nth-child(even){
+    background-color:#1a1a1a;
+}
+
+tr:nth-child(odd){
+    background-color:#141414;
+}
+
+h1{
+    color:#ff4d4d;
+}
+
+</style>
+"@
+
+$Bam |
+Sort-Object "Last Execution Time (UTC)" -Descending |
+ConvertTo-Html `
+-Head $Style `
+-Title "Red Lotus BAM Report" `
+-PreContent "<h1>Red Lotus BAM Report</h1><p>Generated: $(Get-Date)</p><p>Total Entries: $($Bam.Count)</p><p>Timezone: $UserTime</p>" |
+Out-File $HtmlReport -Encoding UTF8
+
+Write-Host ""
+Write-Host "CSV Report Saved:" -ForegroundColor Cyan
+Write-Host $CsvReport -ForegroundColor Yellow
+
+Write-Host ""
+Write-Host "HTML Report Saved:" -ForegroundColor Cyan
+Write-Host $HtmlReport -ForegroundColor Yellow
+
+# Open HTML Report
+Start-Process $HtmlReport
+
+$sw.Stop()
+
+$t = [math]::Round($sw.Elapsed.TotalMinutes, 2)
+
+Write-Host ""
+Write-Host "Elapsed Time $t Minutes" -ForegroundColor Yellow
+```
 
