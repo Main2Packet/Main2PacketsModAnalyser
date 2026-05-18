@@ -67,9 +67,7 @@ Write-Host ""
 Write-Host $Banner -ForegroundColor Magenta
 Write-Host ""
 
-Write-Host -ForegroundColor Cyan "   Made By Main2Packet For " -NoNewline
-Write-Host -ForegroundColor Green "VincentVanilla ScreenSharing."
-Write-Host -ForegroundColor Green "discord.gg/vincentvanilla"
+Write-Host -ForegroundColor Magenta "   Made By Main2Packet. " -NoNewline
 Write-Host ""
 
 function Test-Admin {
