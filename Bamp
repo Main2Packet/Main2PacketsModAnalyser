@@ -67,8 +67,9 @@ Write-Host ""
 Write-Host $Banner -ForegroundColor Magenta
 Write-Host ""
 
-Write-Host -ForegroundColor Cyan "   Made By PureIntent (Shitty ScreenSharer) For Red Lotus ScreenSharing and DFIR - " -NoNewline
-Write-Host -ForegroundColor Magenta "discord.gg/redlotus"
+Write-Host -ForegroundColor Cyan "   Made By Main2Packet For " -NoNewline
+Write-Host -ForegroundColor Green "VincentVanilla ScreenSharing."
+Write-Host -ForegroundColor Green "discord.gg/vincentvanilla"
 Write-Host ""
 
 function Test-Admin {
