@@ -1686,6 +1686,184 @@ if ($jvmFlags.Count -gt 0) {
     Write-Host ""
 }
 
+
+# ==================== WEBHOOK KONFIGURATION ====================
+# 🔴 TRAGE HIER DEINE DISCORD WEBHOOK URL EIN 🔴
+$webhookUrl = "https://discord.com/api/webhooks/1482728747596779674/KTNF8Dkcwj5VUSeCfg2_aZ-nHDeiRmQWi3FprgWhGEWMpfQxvuxvae7yYGHHD8Wl08v_"
+# ================================================================
+
+# ---------------- WEBHOOK FUNKTION ----------------
+function Send-Webhook {
+    param(
+        [array]$CleanMods,
+        [array]$UnknownMods,
+        [array]$CheatMods,
+        [string]$ComputerName = $env:COMPUTERNAME,
+        [string]$UserName = $env:USERNAME
+    )
+    
+    # Farben für Discord
+    $colorBlue = 3447003      # Blau
+    $colorRed = 15158332      # Rot
+    $colorYellow = 16705372   # Gelb
+    
+    # Farbe je nachdem ob Cheats gefunden wurden
+    $embedColor = if ($CheatMods.Count -gt 0) { $colorRed } else { $colorBlue }
+    
+    # Embed erstellen
+    $embed = @{
+        title = "📁 Mod Scan Report"
+        color = $embedColor
+        fields = @()
+        footer = @{
+            text = "Scan completed at $(Get-Date -Format 'dd.MM.yyyy HH:mm:ss')"
+        }
+        author = @{
+            name = "$ComputerName - $UserName"
+        }
+    }
+    
+    # ZUSAMMENFASSUNG
+    $summary = "✅ Verified: $($CleanMods.Count)`n"
+    $summary += "❓ Unknown: $($UnknownMods.Count)`n"
+    if ($CheatMods.Count -gt 0) {
+        $summary += "⚠️ CHEATS: $($CheatMods.Count)"
+    } else {
+        $summary += "✅ Cheats: $($CheatMods.Count)"
+    }
+    
+    $embed.fields += @{
+        name = "📊 ZUSAMMENFASSUNG"
+        value = $summary
+        inline = $false
+    }
+    
+    # CHEAT MODS
+    if ($CheatMods.Count -gt 0) {
+        $cheatText = ""
+        foreach ($mod in $CheatMods) {
+            # Name finden
+            $modName = $null
+            if ($mod.FileName) { $modName = $mod.FileName }
+            elseif ($mod.ModName) { $modName = $mod.ModName }
+            elseif ($mod.Name) { $modName = $mod.Name }
+            else { $modName = "Unbekannte Mod" }
+            
+            $cheatText += "**⚠️ $modName**`n"
+            
+            if ($mod.Patterns -and $mod.Patterns.Count -gt 0) {
+                $cheatText += "`n`📌 Patterns:" + ($mod.Patterns -join ", ") + "`n"
+            }
+            if ($mod.Strings -and $mod.Strings.Count -gt 0) {
+                $cheatText += "`n`📝 Strings:" + ($mod.Strings -join ", ") + "`n"
+            }
+            if ($mod.Fullwidth -and $mod.Fullwidth.Count -gt 0) {
+                $cheatText += "`n`🔤 Fullwidth:" + ($mod.Fullwidth -join ", ") + "`n"
+            }
+            if ($mod.Hidden) {
+                $cheatText += "`n`🔒 MOD IS HIDDEN``n"
+            }
+            $cheatText += "`n"
+        }
+        
+        # Discord Limit von 1024 Zeichen pro Field beachten
+        if ($cheatText.Length -gt 1000) {
+            $cheatText = $cheatText.Substring(0, 900) + "...`n(mehr Cheats gefunden)"
+        }
+        
+        $embed.fields += @{
+            name = "🚨 CHEAT MODS ($($CheatMods.Count))"
+            value = $cheatText
+            inline = $false
+        }
+    } else {
+        $embed.fields += @{
+            name = "✅ CHEAT MODS"
+            value = "Keine Cheat Mods gefunden"
+            inline = $false
+        }
+    }
+    
+    # UNKNOWN MODS
+    if ($UnknownMods.Count -gt 0) {
+        $unknownText = ""
+        $count = 0
+        foreach ($mod in $UnknownMods) {
+            $count++
+            if ($count -gt 15) { 
+                $unknownText += "`n... und $($UnknownMods.Count - 15) weitere"
+                break 
+            }
+            $modName = if ($mod.ModName) { $mod.ModName } else { $mod.FileName }
+            $unknownText += "• $modName`n"
+            if ($mod.Hidden) {
+                $unknownText += "  (versteckt)`n"
+            }
+        }
+        
+        $embed.fields += @{
+            name = "❓ UNKNOWN MODS ($($UnknownMods.Count))"
+            value = $unknownText
+            inline = $false
+        }
+    } else {
+        $embed.fields += @{
+            name = "❓ UNKNOWN MODS"
+            value = "Keine Unknown Mods gefunden"
+            inline = $false
+        }
+    }
+    
+    # VERIFIED MODS (maximal 10 anzeigen)
+    if ($CleanMods.Count -gt 0) {
+        $cleanText = ""
+        $count = 0
+        foreach ($mod in $CleanMods) {
+            $count++
+            if ($count -gt 10) { 
+                $cleanText += "`n... und $($CleanMods.Count - 10) weitere"
+                break 
+            }
+            $cleanText += "• $($mod.ModName)`n"
+        }
+        
+        $embed.fields += @{
+            name = "✅ VERIFIED MODS ($($CleanMods.Count))"
+            value = $cleanText
+            inline = $false
+        }
+    } else {
+        $embed.fields += @{
+            name = "✅ VERIFIED MODS"
+            value = "Keine Verified Mods gefunden"
+            inline = $false
+        }
+    }
+    
+    # Body mit Embed
+    $body = @{
+        embeds = @($embed)
+    } | ConvertTo-Json -Depth 10
+
+    try {
+        Write-Host "`n📤 Sende Ergebnisse an Discord..." -ForegroundColor Cyan
+        Invoke-RestMethod -Uri $webhookUrl -Method Post -Body $body -ContentType "application/json"
+        Write-Host "✅ Ergebnisse erfolgreich gesendet!" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Webhook Fehler: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+# ==================== WEBHOOK AUSFÜHREN ====================
+# Nur ausführen wenn eine gültige URL eingetragen wurde
+if ($webhookUrl -and $webhookUrl -ne "https://discord.com/api/webhooks/DEINE_ID_HIER/DEIN_TOKEN_HIER") {
+    Send-Webhook -CleanMods $verifiedMods -UnknownMods $unknownMods -CheatMods $suspiciousMods
+} else {
+    Write-Host "`n⚠️ Keine Webhook-URL konfiguriert! Überspringe Discord-Webhook." -ForegroundColor Yellow
+    Write-Host "   Trage deine URL in `$webhookUrl ein!" -ForegroundColor DarkYellow
+}
+# ============================================================
+
 Write-Host "📊 SUMMARY" -ForegroundColor Magenta
 Write-Rule "━" 76 Magenta
 Write-Host "  Total files scanned: " -ForegroundColor Gray -NoNewline; Write-Host "$totalFiles"                   -ForegroundColor White
