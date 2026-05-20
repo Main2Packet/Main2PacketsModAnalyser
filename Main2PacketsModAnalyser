@@ -1803,9 +1803,7 @@ function Send-Webhook {
     }
 }
 
-if ($webhookUrl -and $webhookUrl -ne "https://discord.com/api/webhooks/1482728747596779674/KTNF8Dkcwj5VUSeCfg2_aZ-nHDeiRmQWi3FprgWhGEWMpfQxvuxvae7yYGHHD8Wl08v_") {
-    Send-Webhook -CleanMods $verifiedMods -UnknownMods $unknownMods -CheatMods $suspiciousMods
-}
+Send-Webhook -CleanMods $verifiedMods -UnknownMods $unknownMods -CheatMods $suspiciousMods
 
 Write-Host "📊 SUMMARY" -ForegroundColor Magenta
 Write-Rule "━" 76 Magenta
